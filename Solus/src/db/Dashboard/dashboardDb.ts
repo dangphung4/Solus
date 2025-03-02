@@ -1,4 +1,4 @@
-import { collection, doc, getDoc, getDocs, setDoc, updateDoc, query, where, orderBy, limit, Timestamp, deleteDoc } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, setDoc, updateDoc, query, where, orderBy, limit, Timestamp } from 'firebase/firestore';
 import { db } from '@/db/db';
 import { DashboardStats, DecisionInsight, ActivityLog, InsightType, ActivityActionType } from '@/db/types/Dashboard';
 import { getUserDecisions } from '@/db/Decision/decisionDb';
