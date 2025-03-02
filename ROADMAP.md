@@ -12,7 +12,8 @@ Solus aims to become the leading AI-powered decision assistant, helping users ov
 
 The Minimum Viable Product focuses on the core Quick Decision mode functionality.
 
-#### Core Features:
+#### Core Features
+
 - [ ] User authentication and profile creation
 - [ ] Quick Decision mode
   - [ ] Basic decision input interface
@@ -28,14 +29,16 @@ The Minimum Viable Product focuses on the core Quick Decision mode functionality
   - [ ] Decision history storage
   - [ ] Simple analytics
 
-#### Technical Goals:
+#### Technical Goals
+
 - [ ] Establish React 19 architecture
 - [ ] Implement Tailwind styling system
 - [ ] Set up CI/CD pipeline
 - [ ] Achieve 90%+ test coverage for core features
 - [ ] Implement basic error tracking
 
-#### Milestones:
+#### Milestones
+
 1. **Alpha Release**: Internal testing with core team
 2. **Beta Release**: Limited user testing with feedback collection
 3. **Public MVP Launch**: Release to general public with basic features
@@ -44,7 +47,8 @@ The Minimum Viable Product focuses on the core Quick Decision mode functionality
 
 Building on the MVP, this phase focuses on implementing the Deep Reflection mode and enhancing the user experience.
 
-#### Core Features:
+#### Core Features
+
 - [ ] Deep Reflection mode
   - [ ] Multi-step guided framework
   - [ ] Values alignment assessment
@@ -64,7 +68,8 @@ Building on the MVP, this phase focuses on implementing the Deep Reflection mode
   - [ ] Extended decision history
   - [ ] Advanced analytics
 
-#### Technical Goals:
+#### Technical Goals
+
 - [ ] Optimize performance metrics
 - [ ] Enhance security measures
 - [ ] Implement more sophisticated analytics
@@ -74,7 +79,8 @@ Building on the MVP, this phase focuses on implementing the Deep Reflection mode
 
 The final planned phase transforms Solus into a comprehensive decision platform with advanced features and integrations.
 
-#### Core Features:
+#### Core Features
+
 - [ ] Advanced pattern learning
   - [ ] Cross-user pattern identification
   - [ ] Seasonal and contextual awareness
@@ -93,7 +99,8 @@ The final planned phase transforms Solus into a comprehensive decision platform 
   - [ ] Pattern visualization
   - [ ] Personal insights dashboard
 
-#### Technical Goals:
+#### Technical Goals
+
 - [ ] Implement machine learning model improvements
 - [ ] Scale infrastructure for larger user base
 - [ ] Enhance cross-platform compatibility
