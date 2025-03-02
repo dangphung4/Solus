@@ -28,7 +28,7 @@ jobs:
     - name: Install dependencies
       run: |
         cd Solus
-        npm ci --legacy-peer-deps
+        npm ci --legacy-peer-deps --force
       
     - name: Build
       run: |
