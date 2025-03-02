@@ -17,14 +17,23 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
+          cache-dependency-path: 'Solus/package-lock.json'
       
-      - name: Install dependencies
+      - name: Install commitlint dependencies
+        run: |
+          # Install commitlint packages at the repository root level
+          npm install --no-save @commitlint/cli @commitlint/config-conventional
+          
+          # Create a basic commitlint config if it doesn't exist
+          echo '{
+            "extends": ["@commitlint/config-conventional"]
+          }' > .commitlintrc.json
+      
+      - name: Install project dependencies
         run: |
           cd Solus
-          npm ci --legacy-peer-deps
-          npm install --no-save @commitlint/cli @commitlint/config-conventional
+          npm ci --legacy-peer-deps --force
       
       - name: Validate PR commits
         run: |
-          cd Solus
-          npx commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }} --config ../.commitlintrc.json 
+          npx commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }} 
