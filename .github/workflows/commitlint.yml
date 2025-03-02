@@ -22,8 +22,8 @@ jobs:
       - name: Install dependencies
         run: |
           cd Solus
-          npm ci --legacy-peer-deps
-          npm install --no-save @commitlint/cli @commitlint/config-conventional
+          npm ci --legacy-peer-deps --force
+          npm install --no-save @commitlint/cli @commitlint/config-conventional --legacy-peer-deps
       
       - name: Validate PR commits
         run: |
