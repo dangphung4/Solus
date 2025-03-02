@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Subtle rounded square background -->
+  <rect width="512" height="512" rx="128" fill="#FFFFFF"/>
+  
+  <!-- Deep Reflection - Main shape with gradient -->
+  <defs>
+    <linearGradient id="deepGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9F7AEA"/>
+      <stop offset="100%" stop-color="#6B46C1"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Simplified ripple effect -->
+  <path d="M256 80 L432 256 L256 432 L80 256 Z" fill="url(#deepGradient)"/>
+  
+  <!-- Ripples -->
+  <path d="M256 140 L372 256 L256 372 L140 256 Z" fill="none" stroke="#FFFFFF" stroke-width="6" stroke-opacity="0.7"/>
+  <path d="M256 180 L332 256 L256 332 L180 256 Z" fill="none" stroke="#FFFFFF" stroke-width="6" stroke-opacity="0.7"/>
+  
+  <!-- Central focus point -->
+  <circle cx="256" cy="256" r="40" fill="#FFFFFF"/>
+</svg>
