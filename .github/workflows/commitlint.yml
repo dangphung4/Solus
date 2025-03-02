@@ -17,14 +17,44 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
+          cache-dependency-path: 'Solus/package-lock.json'
       
-      - name: Install dependencies
+      - name: Install commitlint dependencies
+        run: |
+          # Install commitlint packages at the repository root level
+          npm install --no-save @commitlint/cli @commitlint/config-conventional
+          
+          # Verify the config file exists
+          if [ ! -f .commitlintrc.json ]; then
+            echo "Error: .commitlintrc.json file not found"
+            exit 1
+          fi
+          
+          # Display the config being used
+          echo "Using existing commitlint configuration:"
+          cat .commitlintrc.json
+      
+      - name: Install project dependencies
         run: |
           cd Solus
-          npm ci --legacy-peer-deps
-          npm install --no-save @commitlint/cli @commitlint/config-conventional
+          npm ci --legacy-peer-deps --force
+      
+      - name: Check if PR is from Dependabot
+        id: dependabot-check
+        run: |
+          PR_TITLE=$(jq -r .pull_request.title "$GITHUB_EVENT_PATH")
+          if [[ "$PR_TITLE" == *"dependabot"* || "$PR_TITLE" == *"Dependabot"* ]]; then
+            echo "is_dependabot=true" >> $GITHUB_OUTPUT
+          else
+            echo "is_dependabot=false" >> $GITHUB_OUTPUT
+          fi
       
       - name: Validate PR commits
+        if: steps.dependabot-check.outputs.is_dependabot != 'true'
         run: |
-          cd Solus
-          npx commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }} --config ../.commitlintrc.json 
+          npx commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }}
+          
+      - name: Skip validation for Dependabot
+        if: steps.dependabot-check.outputs.is_dependabot == 'true'
+        run: |
+          echo "Skipping commitlint validation for Dependabot PR" 
