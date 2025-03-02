@@ -3,7 +3,7 @@
     "Solus": {
       "release-type": "node",
       "changelog-path": "CHANGELOG.md",
-      "changelog-types": ".github/changelog.json",
+      "changelog-types": ".github/release-please-changelog-types.json",
       "bump-minor-pre-major": true,
       "bump-patch-for-minor-pre-major": true,
       "draft": false,
