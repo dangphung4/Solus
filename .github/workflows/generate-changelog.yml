@@ -28,6 +28,10 @@ jobs:
           outputFile: "CHANGELOG.md"
           fromTag: ${{ inputs.previous_tag || '' }}
           toTag: ${{ inputs.tag }}
+          # Ensure emojis are preserved
+          ignorePreReleases: "false"
+          fetchReleaseInformation: "true"
+          fetchReviewers: "true"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
