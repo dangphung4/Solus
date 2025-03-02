@@ -12,28 +12,38 @@ Here is a quickstart guide on how to contribute to this repository.
 - React 19
 - Tailwind CSS v3 (Note: We avoid v4 due to stability issues)
 
+### Directory Structure
+
+- The React application code is in the `/Solus` subdirectory, not in the root
+- GitHub configuration files are in the `/.github` directory
+- All commands should be run from the `/Solus` directory unless otherwise specified
+
 ### Environment Setup
 
 1. **Fork and clone the repository**
+
    ```bash
    git clone https://github.com/dangphung4/Solus
-   cd Solus
+   cd Solus/Solus  # Note the double Solus - one for repo, one for app directory
    ```
 
 2. **Install dependencies**
+
    ```bash
    npm install --legacy-peer-deps
    ```
+
    Note: We use the `--legacy-peer-deps` flag due to React 19 compatibility requirements.
 
 3. **Configure environment variables**
+
    ```bash
-   cd Solus/
    cp .env.example .env.local
    # Edit .env.local with your API keys
    ```
 
 4. **Start the development server**
+
    ```bash
    npm run dev
    ```
@@ -62,7 +72,7 @@ Here is a quickstart guide on how to contribute to this repository.
    - I will provide feedback within 48 hours(most likely 1)
 
 4. **Release Process**
-   - Releases are made from the `main` branch
+   - Releases are automated using Release Please
    - Release candidates are tagged with `rc-` prefix
    - Production releases follow semantic versioning
 
@@ -78,6 +88,7 @@ Here is a quickstart guide on how to contribute to this repository.
 ### Creating a New Feature or Fix
 
 1. **Create a new branch from `develop`**
+
    ```bash
    git checkout develop
    git pull origin develop
@@ -89,12 +100,14 @@ Here is a quickstart guide on how to contribute to this repository.
 2. **Make your changes**
 
 3. **Commit your changes**
+
    ```bash
    git add .
    git commit -m "feat: add user profile page"
    ```
 
 4. **Push your branch**
+
    ```bash
    git push origin feature/your-feature-name
    ```
@@ -112,7 +125,7 @@ We follow [Conventional Commits](https://www.conventionalcommits.org/) for struc
 
 ## `NOTE: PULL REQUESTS WILL NOT BE ACCEPTED IF COMMITS DO NOT FOLLOW THIS CONVENTION`
 
-```
+```bash
 type(optional scope): description
 
 [optional body]
@@ -133,7 +146,7 @@ type(optional scope): description
 
 ### Examples
 
-```
+```js
 feat: add user authentication
 fix(ui): resolve button alignment issue on mobile
 docs: update API documentation
@@ -141,6 +154,18 @@ style: format code with prettier
 refactor: simplify decision algorithm
 test: add test cases for quick decision flow
 ```
+
+## GitHub Workflows
+
+The repository is configured with several GitHub Actions workflows:
+
+1. **Build and Test**: Runs on every PR and push to main/develop
+2. **Code Quality**: Linting and type checking
+3. **Security Scanning**: npm audit and CodeQL analysis
+4. **Commitlint**: Validates commit messages against conventional commits
+5. **Release Please**: Automates versioning and changelog generation
+
+These workflows will run automatically when you push code or create PRs. Make sure all workflows pass before requesting a review.
 
 ## Code Standards
 
@@ -156,7 +181,8 @@ test: add test cases for quick decision flow
 
 - One component per file
 - Follow the existing project structure:
-  ```
+
+  ```ts
   src/
   ├── components/
   │   ├── common/
@@ -169,6 +195,7 @@ test: add test cases for quick decision flow
   ├── types/
   └── utils/
   ```
+
 - Keep components small and focused
 - Use Suspense and Error Boundaries for data loading and error handling
 - No **console logs** on Pull Request
@@ -187,16 +214,19 @@ test: add test cases for quick decision flow
 Before submitting a PR, ensure:
 
 1. **All tests pass**
+
    ```bash
    npm run test
    ```
 
 2. **Linting passes**
+
    ```bash
    npm run lint
    ```
 
 3. **Your code is formatted**
+
    ```bash
    npm run format
    ```
@@ -250,7 +280,8 @@ npm run preview
 - Keep security rules restrictive
 - Test security rules locally
 - Follow collections structure:
-  ```
+
+  ```bash
   users/
   decisions/
   feedback/
@@ -260,7 +291,7 @@ npm run preview
 
 If you have questions or need assistance:
 
-- Shoot me a DM, I can get on call with you 
+- Shoot me a DM, I can get on call with you
 
 ## Learning Resources
 

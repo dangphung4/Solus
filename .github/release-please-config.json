@@ -1,0 +1,14 @@
+{
+  "packages": {
+    "Solus": {
+      "release-type": "node",
+      "changelog-path": "CHANGELOG.md",
+      "changelog-types": ".github/changelog.json",
+      "bump-minor-pre-major": true,
+      "bump-patch-for-minor-pre-major": true,
+      "draft": false,
+      "prerelease": false
+    }
+  },
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json"
+} 

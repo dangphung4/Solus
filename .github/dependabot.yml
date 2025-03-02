@@ -1,0 +1,35 @@
+version: 2
+updates:
+  # Enable version updates for npm
+  - package-ecosystem: "npm"
+    directory: "/Solus"
+    schedule:
+      interval: "weekly"
+    # Limit the number of open pull requests for npm dependencies
+    open-pull-requests-limit: 10
+    # Specify labels for npm pull requests
+    labels:
+      - "dependencies"
+      - "npm"
+    # Set reviewers
+    reviewers:
+      - "dangphung4"
+    # Ignore updates for specific dependencies
+    # ignore:
+    #  - dependency-name: "express"
+    #    versions: ["4.x", "5.x"]
+
+  # Enable version updates for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    # Limit the number of open pull requests for GitHub Actions
+    open-pull-requests-limit: 5
+    # Specify labels for GitHub Actions pull requests
+    labels:
+      - "dependencies"
+      - "github-actions"
+    # Set reviewers
+    reviewers:
+      - "dangphung4" 
