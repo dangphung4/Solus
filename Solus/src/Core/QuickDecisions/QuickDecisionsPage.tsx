@@ -60,8 +60,8 @@ export default function QuickDecisionsPage() {
 
         <section>
           <div className="mb-2 flex justify-between text-sm">
-            <div>Step {step} of {totalSteps}</div>
-            <div>{Math.round(progress)}%</div>
+            <div>Step {step > 3 ? 3 : step} of {totalSteps}</div>
+            <div>{Math.min(Math.round(progress),100)}%</div>
           </div>
           <Progress value={progress} className="h-2" />
         </section>
