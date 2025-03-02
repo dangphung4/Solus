@@ -14,10 +14,23 @@ updates:
     # Set reviewers
     reviewers:
       - "dangphung4"
-    # Ignore updates for specific dependencies
-    # ignore:
-    #  - dependency-name: "express"
-    #    versions: ["4.x", "5.x"]
+    # Configure npm-specific options
+    registries:
+      - npm-registry
+    # Handle peer dependencies properly 
+    versioning-strategy: increase
+    # Add options to handle React type issues
+    ignore:
+      # Keep React types in sync with React version
+      - dependency-name: "@types/react"
+        update-types: ["version-update:semver-major"]
+      # Ignore types updates that might break builds
+      - dependency-name: "@types/*"
+        update-types: ["version-update:semver-major"]
+    # Use options that match your CI build
+    commit-message:
+      prefix: "npm"
+      include: "scope"
 
   # Enable version updates for GitHub Actions
   - package-ecosystem: "github-actions"
@@ -32,4 +45,12 @@ updates:
       - "github-actions"
     # Set reviewers
     reviewers:
-      - "dangphung4" 
+      - "dangphung4"
+
+# Define registries
+registries:
+  npm-registry:
+    type: npm-registry
+    url: https://registry.npmjs.org
+    token: ${{secrets.NPM_TOKEN}}
+    replaces-base: true 
