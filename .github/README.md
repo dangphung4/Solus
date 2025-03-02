@@ -1,98 +1,160 @@
-# GitHub Configuration for Solus
+# Solus
 
-This directory contains GitHub configurations, workflows, and templates for the Solus project.
+<img src="/Solus/public/favicon.svg" alt="Solus" width="200" height="200">
 
-## Directory Structure
+*Singular clarity for every decision*
 
-- `workflows/`: GitHub Actions workflows
-- `ISSUE_TEMPLATE/`: Issue templates for bug reports, feature requests, etc.
-- `CODEOWNERS`: Defines code ownership for the repository
-- `dependabot.yml`: Configuration for Dependabot automated dependency updates
-- `pull_request_template.md`: Template for pull requests
-- `changelog.json`: Configuration for changelog generation
-- `SECURITY.md`: Security policy and vulnerability reporting guidelines
-- `release-please-config.json`: Configuration for Release Please automation
+[![Build and Test](https://github.com/dangphung4/Solus/actions/workflows/build-test.yml/badge.svg)](https://github.com/dangphung4/Solus/actions/workflows/build-test.yml)
+[![Code Quality](https://github.com/dangphung4/Solus/actions/workflows/code-quality.yml/badge.svg)](https://github.com/dangphung4/Solus/actions/workflows/code-quality.yml)
 
-## Important Note
+## Overview
 
-The actual React application is in the `/Solus` subdirectory, not in the root. All workflows are configured to account for this structure.
+Solus is an AI-powered Progressive Web App (PWA) helping indecisive people make better choices through intelligent guidance and personalized recommendations.
 
-## Workflows
+## Repository Structure
 
-### Build and Test
+This repository is organized as follows:
 
-- `build-test.yml`: Builds the application and runs tests
-- Runs on push to main/develop branches and on PRs
+- `/Solus` - Main application code (React, Vite, TypeScript)
+- `/.github` - GitHub workflows, templates, and configuration
+- For development setup, see the [Contributing Guide](CONTRIBUTING.md)
 
-### Code Quality
+## Problems We Solve
 
-- `code-quality.yml`: Runs linting and type checking
-- Runs on push to main/develop branches and on PRs
+- **Decision Fatigue**: Reduces the mental load of evaluating options and tradeoffs
+- **Overthinking**: Provides structure to prevent rumination on simple choices
+- **Blind Spots**: Surfaces considerations users might overlook
+- **Confidence Gap**: Validates thinking and increases decision satisfaction
+- **Time Waste**: Accelerates decision processes with appropriate depth based on importance
 
-### Security Scanning
+## Target Market
 
-- `security-scan.yml`: Performs security scans using npm audit and CodeQL
-- Runs on push, PRs, and weekly schedule
+- **Primary**: Millennials and Gen Z adults who experience decision paralysis
+- **Secondary**: Busy professionals who need to optimize decision-making time
+- **Tertiary**: People facing complex life choices seeking structured guidance
 
-### Stale Issue Management
+## Tech Stack
 
-- `stale.yml`: Automatically marks and closes stale issues and PRs
-- Runs on a daily schedule
+- **Frontend**: React 19 with Vite, Tailwind CSS, shadcn/ui component library
+- **Backend**: Firebase (Authentication, Firestore, Functions)
+- **AI**: Vercel AI SDK for natural language understanding and insights
+- **Deployment**: PWA for cross-platform compatibility
+- **CI/CD**: GitHub Actions for testing, code quality, and deployment
 
-### Vercel Deployment
+## Core Features
 
-- `vercel-deploy.yml`: Handles deployment to Vercel
-- Deploys production on push to main
-- Can create preview deployments using manual workflow dispatch
+### Quick Decision Mode
 
-### Conventional Commits Checks
+For everyday choices (food, entertainment, simple scheduling)
 
-- `conventional-commits.yml`: Ensures PR titles follow conventional commit format
-- Runs when PRs are opened/edited/synchronized
+- 30-second decision flow
+- Context-aware recommendations
+- Simple gut reaction capture
+- Pattern learning from past choices
+- Immediate, personalized suggestions
 
-### Commitlint
+### Deep Reflection Mode
 
-- `commitlint.yml`: Validates commit messages against the commitlint rules
-- Uses the .commitlintrc.json file in the root
+For complex or impactful decisions (career, relationships, major purchases)
 
-### Release Management
+- Multi-step guided framework
+- Values alignment assessment
+- Pros/cons with weighted importance
+- Future scenario visualization
+- Cognitive bias identification
+- Balanced perspective generation
 
-- `release-please.yml`: Automates versioning and changelog generation
-- Uses the changelog.json format for structured changelogs
+### Smart Features
 
-### Changelog Generation
+- Automatic decision type detection
+- Contextual prompting based on decision category
+- Personal pattern recognition
+- Judgment-free space for sensitive topics
+- Privacy-first approach for personal matters
 
-- `generate-changelog.yml`: Manual workflow to generate changelog for a specific tag
-- Useful for creating release notes
+## Architecture
 
-## Local Testing
+Solus follows a vertical slice architecture, organizing code around features rather than technical layers. Each feature contains all necessary components (UI, business logic, data access) in a self-contained slice.
 
-You can test these workflows locally using [act](https://github.com/nektos/act):
+## Development
+
+### Prerequisites
+
+- Node.js v20+
+- npm
+- Git
+
+### Setup
 
 ```bash
-# Install act
-brew install act
+# Clone the repository
+git clone https://github.com/dangphung4/Solus
+cd Solus/Solus  # Note: app is in /Solus subdirectory
 
-# Test build workflow (from Solus directory)
-cd Solus
-npm run test-build-workflow
+# Install dependencies
+npm install --legacy-peer-deps
 
-# Test lint workflow (from Solus directory)
-cd Solus
-npm run test-lint-workflow
+# Set up environment variables
+cp .env.example .env.local
+# Edit .env.local with your API keys
+
+# Start development server
+npm run dev
 ```
 
-## Adding Secrets
+### Commands
 
-Many workflows require GitHub Secrets to be configured:
+```bash
+# Development
+npm run dev
 
-1. Go to Repository Settings > Secrets and Variables > Actions
-2. Add the following secrets:
-   - `FIREBASE_API_KEY`, `FIREBASE_AUTH_DOMAIN`, etc.
-   - `OPENAI_API_KEY`
-   - `VERCEL_TOKEN`
+# Build
+npm run build
 
-## Issues and PRs
+# Test
+npm run test
 
-- Issue templates are available when creating new issues
-- Use the PR template to ensure your changes include all necessary information
+# Lint
+npm run lint
+```
+
+## Contributing
+
+Please see our [Contributing Guide](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
+
+## Continuous Integration
+
+This project uses GitHub Actions for:
+
+- Building and testing
+- Code quality checks (linting, type checking)
+- Security scanning
+- Automated releases
+
+## Monetization
+
+- Freemium model with premium subscription
+- Free tier: Limited daily quick decisions, basic deep reflections
+- Premium: Unlimited decisions, enhanced AI insights, decision journal
+- No ads, no data selling
+
+## Differentiation
+
+- Dual-mode approach for both quick and complex decisions
+- AI that understands emotional and ethical dimensions
+- Learning system that improves with usage
+- Privacy-focused design for sensitive decisions
+- Structured frameworks tailored to decision types
+
+## Development Phases
+
+1. **MVP**: Quick Decision mode with basic AI for common choices
+2. **V2**: Deep Reflection mode with enhanced frameworks
+3. **V3**: Advanced pattern learning and expanded decision library
+
+## Ethical Approach
+
+- Clear boundaries for medical, legal, and mental health topics
+- Appropriate disclaimers when professional guidance would be beneficial
+- Design choices encouraging reflection over impulsivity
+- Transparent AI limitations and confidence levels
