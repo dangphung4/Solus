@@ -24,16 +24,37 @@ jobs:
           # Install commitlint packages at the repository root level
           npm install --no-save @commitlint/cli @commitlint/config-conventional
           
-          # Create a basic commitlint config if it doesn't exist
-          echo '{
-            "extends": ["@commitlint/config-conventional"]
-          }' > .commitlintrc.json
+          # Verify the config file exists
+          if [ ! -f .commitlintrc.json ]; then
+            echo "Error: .commitlintrc.json file not found"
+            exit 1
+          fi
+          
+          # Display the config being used
+          echo "Using existing commitlint configuration:"
+          cat .commitlintrc.json
       
       - name: Install project dependencies
         run: |
           cd Solus
           npm ci --legacy-peer-deps --force
       
-      - name: Validate PR commits
+      - name: Check if PR is from Dependabot
+        id: dependabot-check
         run: |
-          npx commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }} 
+          PR_TITLE=$(jq -r .pull_request.title "$GITHUB_EVENT_PATH")
+          if [[ "$PR_TITLE" == *"dependabot"* || "$PR_TITLE" == *"Dependabot"* ]]; then
+            echo "is_dependabot=true" >> $GITHUB_OUTPUT
+          else
+            echo "is_dependabot=false" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Validate PR commits
+        if: steps.dependabot-check.outputs.is_dependabot != 'true'
+        run: |
+          npx commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }}
+          
+      - name: Skip validation for Dependabot
+        if: steps.dependabot-check.outputs.is_dependabot == 'true'
+        run: |
+          echo "Skipping commitlint validation for Dependabot PR" 
