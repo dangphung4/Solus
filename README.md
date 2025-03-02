@@ -6,7 +6,6 @@
 
 [![Build and Test](https://github.com/dangphung4/Solus/actions/workflows/build-test.yml/badge.svg)](https://github.com/dangphung4/Solus/actions/workflows/build-test.yml)
 [![Code Quality](https://github.com/dangphung4/Solus/actions/workflows/code-quality.yml/badge.svg)](https://github.com/dangphung4/Solus/actions/workflows/code-quality.yml)
-[![Security Scan](https://github.com/dangphung4/Solus/actions/workflows/security-scan.yml/badge.svg)](https://github.com/dangphung4/Solus/actions/workflows/security-scan.yml)
 
 ## Overview
 
