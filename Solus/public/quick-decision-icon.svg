@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Subtle rounded square background -->
+  <rect width="512" height="512" rx="128" fill="#FFFFFF"/>
+  
+  <!-- Quick Decision - Main shape with gradient -->
+  <defs>
+    <linearGradient id="quickGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F97316"/>
+      <stop offset="100%" stop-color="#EA580C"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Diamond base -->
+  <path d="M256 80 L432 256 L256 432 L80 256 Z" fill="url(#quickGradient)"/>
+  
+  <!-- Forward arrow indicator -->
+  <path d="M176 256 L256 176 L336 256 L296 256 L296 336 L216 336 L216 256 Z" 
+        fill="#FFFFFF"/>
+</svg>
