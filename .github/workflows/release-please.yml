@@ -18,4 +18,5 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           target-branch: main
           config-file: .github/release-please-config.json
-          release-type: node 
+          release-type: node
+          path: Solus 
