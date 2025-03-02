@@ -9,6 +9,13 @@ on:
     - cron: '0 0 * * 0'  # Run weekly on Sunday at midnight
   workflow_dispatch:
 
+# permissions required for code scanning
+permissions:
+  actions: read
+  contents: read
+  security-events: write
+  pull-requests: read
+
 jobs:
   security-scan:
     runs-on: ubuntu-latest
