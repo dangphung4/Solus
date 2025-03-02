@@ -8,7 +8,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithPopup,
   updateProfile as firebaseUpdateProfile,
-  PhoneAuthProvider,
+  // PhoneAuthProvider,
   signInWithPhoneNumber,
   RecaptchaVerifier,
   ConfirmationResult
@@ -79,7 +79,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
       email: userCredential.user.email || '',
       displayName: displayName || userCredential.user.displayName || '',
       photoURL: userCredential.user.photoURL || '',
-      createdAt: new Date().toISOString()
+      createdAt: new Date(),
+      lastLoginAt: new Date(),
+      userId: userCredential.user.uid
     });
   };
 
@@ -95,7 +97,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
         email: userCredential.user.email || '',
         displayName: userCredential.user.displayName || '',
         photoURL: userCredential.user.photoURL || '',
-        createdAt: new Date().toISOString()
+        createdAt: new Date(),
+        lastLoginAt: new Date(),
+        userId: userCredential.user.uid
       });
     }
   };
@@ -149,7 +153,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
           phoneNumber: userCredential.user.phoneNumber || '',
           displayName: displayName || userCredential.user.displayName || '',
           photoURL: userCredential.user.photoURL || '',
-          createdAt: new Date().toISOString()
+          createdAt: new Date(),
+          lastLoginAt: new Date(),
+          userId: userCredential.user.uid,
+          email: userCredential.user.email || ''
         });
       }
       
