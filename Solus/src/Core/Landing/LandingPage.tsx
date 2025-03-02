@@ -23,7 +23,7 @@ import fakePreview from "@/assets/fake-preview.png"
 
 export default function LandingPage() {
   const [email, setEmail] = useState("")
-  const [scrolled, setScrolled] = useState(false)
+  const [, setScrolled] = useState(false)
   const navigate = useNavigate()
 
   // Handle scroll effect
@@ -403,7 +403,7 @@ export default function LandingPage() {
             <div className="flex flex-col items-center text-center space-y-6 mb-12">
               <div className="h-1 w-20 bg-gradient-to-r from-transparent via-primary to-transparent rounded-full mb-2" />
               <h2 className="text-3xl md:text-4xl font-bold tracking-tighter">What Our Users Say</h2>
-              <p className="text-muted-foreground max-w-[700px]">Join thousands who've found clarity through Solus.</p>
+              <p className="text-muted-foreground max-w-[700px]">Join the waitlist to be one of the first beta testers.</p>
             </div>
 
             <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">

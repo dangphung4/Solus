@@ -11,7 +11,6 @@ import {
     Globe, 
     ArrowRight, 
     Mail, 
-    Code 
   } from "lucide-react"
   import { Button } from "@/components/ui/button"
   import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -69,36 +68,43 @@ import {
                 <div className="text-center mb-8">
                   <div className="h-1 w-20 bg-gradient-to-r from-transparent via-primary to-transparent rounded-full mx-auto mb-4" />
                   <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Meet the Creator</h2>
+                  <p className="text-muted-foreground max-w-2xl mx-auto mt-3">Why Solus was created</p>
                 </div>
                 
-                <Card className="overflow-hidden border border-muted transition-all duration-300 hover:shadow-lg">
+                <Card className="overflow-hidden border border-muted/60 transition-all duration-500 hover:shadow-xl group">
+                  <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-transparent via-primary/70 to-transparent opacity-70 group-hover:opacity-100 transition-opacity duration-500" />
                   <div className="md:flex">
-                    <div className="md:w-1/3 bg-gradient-to-br from-muted to-muted/50 p-8 flex flex-col items-center justify-center space-y-4">
-                      <Avatar className="h-24 w-24 border-2 border-primary/20 shadow-lg">
+                    <div className="md:w-1/3 bg-gradient-to-br from-muted/80 to-background p-10 flex flex-col items-center justify-center space-y-6 relative overflow-hidden">
+                      <div className="absolute inset-0 bg-grid-white/[0.02] opacity-50" />
+                      <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-primary/10 rounded-full blur-3xl" />
+                      
+                      <Avatar className="h-32 w-32 border-4 border-primary/20 shadow-xl ring-2 ring-background transition-all duration-300 group-hover:scale-105">
                         <AvatarImage src="https://github.com/dangphung4.png" alt="Dang Phung" />
-                        <AvatarFallback className="text-xl bg-primary/10">DP</AvatarFallback>
+                        <AvatarFallback className="text-2xl font-bold bg-primary/20">DP</AvatarFallback>
                       </Avatar>
-                      <div className="text-center">
-                        <h3 className="font-semibold text-xl">Dang Phung</h3>
-                        <p className="text-muted-foreground">Founder & Developer</p>
+                      
+                      <div className="text-center relative z-10">
+                        <h3 className="font-bold text-2xl bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/80">Dang Phung</h3>
+                        <p className="text-muted-foreground font-medium">Founder & Developer</p>
                       </div>
-                      <div className="flex space-x-2">
-                        <Button variant="ghost" size="icon" className="rounded-full hover:bg-primary/10 transition-all duration-300" asChild>
+                      
+                      <div className="flex space-x-3">
+                        <Button variant="outline" size="icon" className="rounded-full bg-background/50 backdrop-blur-sm hover:bg-primary/10 hover:text-primary transition-all duration-300 shadow-sm" asChild>
                           <a href="https://github.com/dangphung4" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
                             <Github className="h-5 w-5" />
                           </a>
                         </Button>
-                        <Button variant="ghost" size="icon" className="rounded-full hover:bg-primary/10 transition-all duration-300" asChild>
+                        <Button variant="outline" size="icon" className="rounded-full bg-background/50 backdrop-blur-sm hover:bg-primary/10 hover:text-primary transition-all duration-300 shadow-sm" asChild>
                           <a href="https://linkedin.com/dang-phung" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
                             <Linkedin className="h-5 w-5" />
                           </a>
                         </Button>
-                        <Button variant="ghost" size="icon" className="rounded-full hover:bg-primary/10 transition-all duration-300" asChild>
+                        <Button variant="outline" size="icon" className="rounded-full bg-background/50 backdrop-blur-sm hover:bg-primary/10 hover:text-primary transition-all duration-300 shadow-sm" asChild>
                           <a href="https://dangtphung.com" target="_blank" rel="noopener noreferrer" aria-label="Personal Website">
                             <Globe className="h-5 w-5" />
                           </a>
                         </Button>
-                        <Button variant="ghost" size="icon" className="rounded-full hover:bg-primary/10 transition-all duration-300" asChild>
+                        <Button variant="outline" size="icon" className="rounded-full bg-background/50 backdrop-blur-sm hover:bg-primary/10 hover:text-primary transition-all duration-300 shadow-sm" asChild>
                           <a href="mailto:dangphung4@gmail.com" target="_blank" rel="noopener noreferrer" aria-label="Email">
                             <Mail className="h-5 w-5" />
                           </a>
@@ -106,24 +112,26 @@ import {
                       </div>
                     </div>
                     
-                    <div className="md:w-2/3 p-8">
-                      <div className="space-y-4">
-                        <p>
-                          Passionate about leveraging technology to solve everyday problems, Dang created Solus 
-                          to address the universal challenge of decision-making in our increasingly complex world.
+                    <div className="md:w-2/3 p-10 relative">
+                      <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -z-10" />
+                      <div className="space-y-5">
+                        <p className="text-lg leading-relaxed">
+                          I know too many people who can't make decisions. They overthink things and overanalyze. 
+                          They want to make the "right" decision, but they can't.
                         </p>
-                        <p>
-                          With a background in software development and AI, Dang combines technical expertise with 
-                          a deep understanding of human psychology to create tools that truly enhance our daily lives.
+                        <blockquote className="pl-4 border-l-2 border-primary/50 italic text-muted-foreground">
+                            Indecision is the thief of opportunity." - Jim Rohn 
+                        </blockquote>
+                        <p className="leading-relaxed">
+                          I wanted to create a tool that would help people make decisions quickly and easily.
                         </p>
-                        <p>
-                          Solus represents Dang's vision of technology that doesn't just provide information, but 
-                          actually helps us make sense of it and arrive at better decisions.
+                        <p className="leading-relaxed">
+                          Solus is my attempt to solve this problem.
                         </p>
-                        <div className="pt-4">
-                          <Button variant="outline" className="group transition-all duration-300 hover:bg-primary/10" asChild>
-                            <a href="mailto:dangphung4@gmail.com">
-                              Contact Dang
+                        <div className="pt-6">
+                          <Button className="group bg-gradient-to-r from-primary/90 to-primary/70 hover:from-primary hover:to-primary/80 text-primary-foreground shadow-md hover:shadow-lg transition-all duration-300" asChild>
+                            <a href="mailto:dangphung4@gmail.com" className="flex items-center">
+                              Connect with Dang
                               <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                             </a>
                           </Button>
@@ -138,35 +146,49 @@ import {
               <section>
                 <div className="text-center mb-8">
                   <div className="h-1 w-20 bg-gradient-to-r from-transparent via-primary to-transparent rounded-full mx-auto mb-4" />
-                  <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Technology Stack</h2>
+                    <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Technology Stack</h2>
                   <p className="text-muted-foreground max-w-2xl mx-auto mt-3">
                     Built with modern, reliable technologies
                   </p>
                 </div>
-                
-                <Card className="border border-muted transition-all duration-300 hover:shadow-lg overflow-hidden">
-                  <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
-                  <CardContent className="p-8">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                      <div className="flex flex-col items-center p-6 rounded-lg bg-gradient-to-br from-muted/80 to-muted/30 border border-muted transition-all duration-300 hover:scale-105 hover:shadow-md">
-                        <img src={ReactIcon} alt="React" className="h-12 w-12 mb-3" />
-                        <span className="text-sm font-medium">React</span>
+                <div className="bg-gradient-to-r from-background via-background/95 to-background p-1 rounded-xl">
+                  <Card className="border border-primary/20 shadow-sm transition-all duration-300 hover:shadow-xl overflow-hidden backdrop-blur-sm">
+                    <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-transparent via-primary to-transparent" />
+                    <CardContent className="p-10">
+                      <h3 className="text-xl font-semibold mb-6 text-center">Built with cutting-edge technologies</h3>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+                        <div className="group flex flex-col items-center p-6 rounded-xl bg-gradient-to-br from-background to-muted/10 border border-primary/10 transition-all duration-300 hover:scale-105 hover:shadow-md hover:border-primary/30">
+                          <div className="bg-primary/5 p-3 rounded-full mb-4 group-hover:bg-primary/10 transition-all duration-300">
+                            <img src={ReactIcon} alt="React" className="h-12 w-12" />
+                          </div>
+                          <span className="font-medium">React</span>
+                          <span className="text-xs text-muted-foreground mt-1">UI Library</span>
+                        </div>
+                        <div className="group flex flex-col items-center p-6 rounded-xl bg-gradient-to-br from-background to-muted/10 border border-primary/10 transition-all duration-300 hover:scale-105 hover:shadow-md hover:border-primary/30">
+                          <div className="bg-primary/5 p-3 rounded-full mb-4 group-hover:bg-primary/10 transition-all duration-300">
+                            <img src={TypeScriptIcon} alt="TypeScript" className="h-12 w-12" />
+                          </div>
+                          <span className="font-medium">TypeScript</span>
+                          <span className="text-xs text-muted-foreground mt-1">Type Safety</span>
+                        </div>
+                        <div className="group flex flex-col items-center p-6 rounded-xl bg-gradient-to-br from-background to-muted/10 border border-primary/10 transition-all duration-300 hover:scale-105 hover:shadow-md hover:border-primary/30">
+                          <div className="bg-primary/5 p-3 rounded-full mb-4 group-hover:bg-primary/10 transition-all duration-300">
+                            <img src={TailwindIcon} alt="Tailwind CSS" className="h-12 w-12" />
+                          </div>
+                          <span className="font-medium">Tailwind CSS</span>
+                          <span className="text-xs text-muted-foreground mt-1">Styling</span>
+                        </div>
+                        <div className="group flex flex-col items-center p-6 rounded-xl bg-gradient-to-br from-background to-muted/10 border border-primary/10 transition-all duration-300 hover:scale-105 hover:shadow-md hover:border-primary/30">
+                          <div className="bg-primary/5 p-3 rounded-full mb-4 group-hover:bg-primary/10 transition-all duration-300">
+                            <img src={FirebaseIcon} alt="Firebase" className="h-12 w-12" />
+                          </div>
+                          <span className="font-medium">Firebase</span>
+                          <span className="text-xs text-muted-foreground mt-1">Backend</span>
+                        </div>
                       </div>
-                      <div className="flex flex-col items-center p-6 rounded-lg bg-gradient-to-br from-muted/80 to-muted/30 border border-muted transition-all duration-300 hover:scale-105 hover:shadow-md">
-                        <img src={TypeScriptIcon} alt="TypeScript" className="h-12 w-12 mb-3" />
-                        <span className="text-sm font-medium">TypeScript</span>
-                      </div>
-                      <div className="flex flex-col items-center p-6 rounded-lg bg-gradient-to-br from-muted/80 to-muted/30 border border-muted transition-all duration-300 hover:scale-105 hover:shadow-md">
-                        <img src={TailwindIcon} alt="Tailwind CSS" className="h-12 w-12 mb-3" />
-                        <span className="text-sm font-medium">Tailwind CSS</span>
-                      </div>
-                      <div className="flex flex-col items-center p-6 rounded-lg bg-gradient-to-br from-muted/80 to-muted/30 border border-muted transition-all duration-300 hover:scale-105 hover:shadow-md">
-                        <img src={FirebaseIcon} alt="Firebase" className="h-12 w-12 mb-3" />
-                        <span className="text-sm font-medium">Firebase</span>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                    </CardContent>
+                  </Card>
+                </div>
               </section>
               
               {/* CTA Section */}
@@ -175,7 +197,7 @@ import {
                 <div className="p-8 md:p-10 border border-primary/10 rounded-xl bg-gradient-to-b from-background to-background/50 backdrop-blur-sm shadow-lg text-center">
                   <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-4">Ready to make better decisions?</h2>
                   <p className="text-muted-foreground max-w-2xl mx-auto mb-6">
-                    Join thousands who've found clarity through Solus and start making confident decisions today.
+                    Join Solus and start making confident decisions today.
                   </p>
                   <Button className="transition-all duration-300 hover:scale-105 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary">
                     Get Started
