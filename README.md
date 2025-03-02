@@ -1,5 +1,7 @@
 # Solus
 
+<img src="/Solus/public/favicon.svg" alt="Solus" width="200" height="200">
+
 *Singular clarity for every decision*
 
 ## Overview
