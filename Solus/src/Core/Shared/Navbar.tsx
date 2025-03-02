@@ -206,7 +206,7 @@ export function Navbar() {
                       Sign In
                     </Button>
                   </Link>
-                  <Link to="/login">
+                  <Link to="/signup">
                     <Button 
                       size="sm"
                       className="rounded-full shadow-sm hover:shadow-md transition-all"

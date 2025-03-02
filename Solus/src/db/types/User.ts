@@ -6,6 +6,7 @@
 export interface User {
     id: string;
     displayName: string;
+    phoneNumber?: string;
     email: string;
     photoURL: string;
     createdAt: Date;
