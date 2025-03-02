@@ -75,14 +75,14 @@ export default defineConfig({
           short_name: 'Quick',
           description: 'Make a quick decision',
           url: '/quick-decision',
-          icons: [{ src: 'quick-decision-icon.png', sizes: '192x192' }]
+          icons: [{ src: 'quick-decision-icon.png', sizes: '512x512' }]
         },
         {
           name: 'Deep Reflection',
           short_name: 'Deep',
           description: 'Start a deep reflection',
           url: '/deep-reflection',
-          icons: [{ src: 'deep-reflection-icon.png', sizes: '192x192' }]
+          icons: [{ src: 'deep-reflection-icon.png', sizes: '512x512' }]
         }
       ]
     },
