@@ -46,7 +46,7 @@ export default function QuickDecisionsPage() {
   };
 
   return (
-    <div className="container max-w-3xl py-8">
+    <div className="container max-w-3xl py-8 justify-self-center">
       <div className="flex flex-col gap-8">
         <section>
           <div className="flex items-center gap-2 mb-2">
