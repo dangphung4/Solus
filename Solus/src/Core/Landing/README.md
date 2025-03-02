@@ -1,0 +1,1 @@
+# we follow vertical slice architecture

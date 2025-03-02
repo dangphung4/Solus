@@ -1,7 +1,24 @@
-import './PWABadge.css'
-
 import { useRegisterSW } from 'virtual:pwa-register/react'
+import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
+import { AlertCircle, RefreshCw } from 'lucide-react'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 
+/**
+ * A functional component that displays a badge for Progressive Web App (PWA) updates.
+ * The badge informs users when the app is ready to work offline or when a new version is available.
+ * It utilizes service workers to check for updates periodically.
+ *
+ * @returns {JSX.Element | null} Returns a JSX element representing the badge if there are updates or offline readiness,
+ *                                otherwise returns null.
+ *
+ * @example
+ * // Usage within a React component
+ * function App() {
+ *   return (
+ *     <div>
+ *       <PWABadge />
+ *       {/* Other components */
 function PWABadge() {
   // check for updates every hour
   const period = 60 * 60 * 1000
@@ -31,22 +48,45 @@ function PWABadge() {
     setNeedRefresh(false)
   }
 
+  if (!offlineReady && !needRefresh) return null
+
   return (
-    <div className="PWABadge" role="alert" aria-labelledby="toast-message">
-      { (offlineReady || needRefresh)
-      && (
-        <div className="PWABadge-toast">
-          <div className="PWABadge-message">
-            { offlineReady
-              ? <span id="toast-message">App ready to work offline</span>
-              : <span id="toast-message">New content available, click on reload button to update.</span>}
-          </div>
-          <div className="PWABadge-buttons">
-            { needRefresh && <button className="PWABadge-toast-button" onClick={() => updateServiceWorker(true)}>Reload</button> }
-            <button className="PWABadge-toast-button" onClick={() => close()}>Close</button>
-          </div>
+    <div className="fixed bottom-4 right-4 z-50 max-w-[420px]" role="alert">
+      <Alert variant={needRefresh ? "destructive" : "default"}>
+        <AlertCircle className="h-4 w-4" />
+        <AlertTitle>
+          {needRefresh ? "Update Available" : "App Ready"}
+        </AlertTitle>
+        <AlertDescription>
+          {needRefresh 
+            ? "A new version is available. Click reload to update."
+            : "App is ready to work offline."
+          }
+        </AlertDescription>
+        <div className={cn(
+          "mt-3 flex gap-3",
+          needRefresh ? "justify-between" : "justify-end"
+        )}>
+          {needRefresh && (
+            <Button 
+              variant="destructive"
+              size="sm"
+              onClick={() => updateServiceWorker(true)}
+              className="gap-2"
+            >
+              <RefreshCw className="h-4 w-4" />
+              Reload
+            </Button>
+          )}
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={close}
+          >
+            Close
+          </Button>
         </div>
-      )}
+      </Alert>
     </div>
   )
 }

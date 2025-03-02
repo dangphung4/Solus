@@ -1,0 +1,121 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 275 69% 99%;
+    --foreground: 275 59% 0%;
+    --muted: 245 18% 92%;
+    --muted-foreground: 245 3% 38%;
+    --popover: 275 69% 99%;
+    --popover-foreground: 275 59% 0%;
+    --card: 275 69% 99%;
+    --card-foreground: 275 59% 0%;
+    --border: 275 14% 93%;
+    --input: 275 14% 93%;
+    --primary: 275 12% 51%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 245 12% 51%;
+    --secondary-foreground: 0 0% 100%;
+    --accent: 305 12% 51%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 19 90% 24%;
+    --destructive-foreground: 19 90% 84%;
+    --ring: 275 12% 51%;
+    --chart-1: 275 12% 51%;
+    --chart-2: 245 12% 51%;
+    --chart-3: 305 12% 51%;
+    --chart-4: 245 12% 54%;
+    --chart-5: 275 15% 51%;
+    --radius: 0.5rem;
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 217.5 9.09% 17.25%;
+    --foreground: 334 34% 98%;
+    --muted: 210 9.09% 12.94%;
+    --muted-foreground: 334 0% 60.77%;
+    --popover: 210 9.09% 12.94%;
+    --popover-foreground: 334 34% 98%;
+    --card: 210 9.09% 12.94%;
+    --card-foreground: 334 34% 98%;
+    --border: 334 0% 18.46%;
+    --input: 214.29 5.04% 27.25%;
+    --primary: 226.73 58.43% 65.1%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 214.29 5.04% 27.25%;
+    --secondary-foreground: 334 0% 100%;
+    --accent: 217.5 9.09% 17.25%;
+    --accent-foreground: 226.73 58.43% 65.1%;
+    --destructive: 358.16 68.78% 53.53%;
+    --destructive-foreground: 0 0% 100%;
+    --ring: 217.5 9.09% 17.25%;
+    --chart-1: 226.73 58.43% 65.1%;
+    --chart-2: 214.29 5.04% 27.25%;
+    --chart-3: 217.5 9.09% 17.25%;
+    --chart-4: 214.29 5.04% 30.25%;
+    --chart-5: 226.73 61.43% 65.1%;
+    --radius: 0.5rem;
+    --sidebar-background: 215 14% 14%;
+    --sidebar-foreground: 226 70% 90%;
+    --sidebar-primary: 226.73 58.43% 65.1%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 217.5 9.09% 22%;
+    --sidebar-accent-foreground: 226.73 58.43% 65.1%;
+    --sidebar-border: 214.29 5.04% 22%;
+    --sidebar-ring: 226.73 58.43% 65.1%;
+  }
+}
+
+@layer base {
+    * {
+      @apply border-border outline-ring/50;
+    }
+    body {
+      @apply bg-background text-foreground;
+      font-feature-settings: "rlig" 1, "calt" 1;
+    }
+  }
+  
+/* Mobile Bottom Navigation Adjustments */
+@media (max-width: 768px) {
+  main {
+    padding-bottom: 5rem !important; /* Ensure content isn't hidden behind nav bar */
+  }
+}
+
+/* Additional PWA-friendly styles */
+html, body {
+  height: 100%;
+  overscroll-behavior-y: none; /* Prevents pull-to-refresh */
+  -webkit-tap-highlight-color: transparent; /* Removes tap highlight on iOS */
+}
+
+/* Improved scrolling behavior */
+* {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+/* Selection colors */
+::selection {
+  background-color: hsl(var(--primary) / 20%);
+  color: hsl(var(--primary));
+}
+
+/* Hide elements when printing */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
+  

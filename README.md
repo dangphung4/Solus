@@ -22,7 +22,7 @@ Solus is an AI-powered Progressive Web App (PWA) helping indecisive people make 
 ## Tech Stack
 * **Frontend**: React with Vite, Tailwind CSS, shadcn/ui component library
 * **Backend**: Firebase (Authentication, Firestore, Functions)
-* **AI**: OpenAI API for natural language understanding and insights
+* **AI**: Vercel AI SDK for natural language understanding and insights
 * **Deployment**: PWA for cross-platform compatibility
 
 ## Core Features
