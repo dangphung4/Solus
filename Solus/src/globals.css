@@ -40,41 +40,41 @@
   }
 
   .dark {
-    --background: 220 42.86% 10.98%;
-    --foreground: 0 0% 98.43%;
-    --muted: 217.5 23.53% 26.67%;
-    --muted-foreground: 217.78 15.08% 64.9%;
-    --popover: 214.29 32.56% 16.86%;
-    --popover-foreground: 0 0% 98.43%;
-    --card: 214.29 32.56% 16.86%;
-    --card-foreground: 0 0% 98.43%;
-    --border: 217.5 23.53% 26.67%;
-    --input: 217.5 23.53% 26.67%;
-    --primary: 261.43 62.92% 65.1%;
+    --background: 217.5 9.09% 17.25%;
+    --foreground: 334 34% 98%;
+    --muted: 210 9.09% 12.94%;
+    --muted-foreground: 334 0% 60.77%;
+    --popover: 210 9.09% 12.94%;
+    --popover-foreground: 334 34% 98%;
+    --card: 210 9.09% 12.94%;
+    --card-foreground: 334 34% 98%;
+    --border: 334 0% 18.46%;
+    --input: 214.29 5.04% 27.25%;
+    --primary: 226.73 58.43% 65.1%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 220 42.86% 10.98%;
-    --secondary-foreground: 263.08 48.15% 94.71%;
-    --accent: 217.5 23.53% 26.67%;
-    --accent-foreground: 0 0% 98.43%;
-    --destructive: 4.03 69.95% 41.76%;
+    --secondary: 214.29 5.04% 27.25%;
+    --secondary-foreground: 334 0% 100%;
+    --accent: 217.5 9.09% 17.25%;
+    --accent-foreground: 226.73 58.43% 65.1%;
+    --destructive: 358.16 68.78% 53.53%;
     --destructive-foreground: 0 0% 100%;
-    --ring: 170.92 97.88% 62.94%;
-    --chart-1: 261.43 62.92% 65.1%;
-    --chart-2: 339.77 74.78% 54.9%;
-    --chart-3: 220.45 70.08% 50.2%;
-    --chart-4: 183.75 45.28% 58.43%;
-    --chart-5: 40.11 80% 54.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
+    --ring: 217.5 9.09% 17.25%;
+    --chart-1: 226.73 58.43% 65.1%;
+    --chart-2: 214.29 5.04% 27.25%;
+    --chart-3: 217.5 9.09% 17.25%;
+    --chart-4: 214.29 5.04% 30.25%;
+    --chart-5: 226.73 61.43% 65.1%;
+    --radius: 0.5rem;
+    --sidebar-background: 215 14% 14%;
+    --sidebar-foreground: 226 70% 90%;
+    --sidebar-primary: 226.73 58.43% 65.1%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-accent: 217.5 9.09% 22%;
+    --sidebar-accent-foreground: 226.73 58.43% 65.1%;
+    --sidebar-border: 214.29 5.04% 22%;
+    --sidebar-ring: 226.73 58.43% 65.1%;
   }
 }
-
 
 @layer base {
     * {
@@ -82,6 +82,40 @@
     }
     body {
       @apply bg-background text-foreground;
+      font-feature-settings: "rlig" 1, "calt" 1;
     }
   }
+  
+/* Mobile Bottom Navigation Adjustments */
+@media (max-width: 768px) {
+  main {
+    padding-bottom: 5rem !important; /* Ensure content isn't hidden behind nav bar */
+  }
+}
+
+/* Additional PWA-friendly styles */
+html, body {
+  height: 100%;
+  overscroll-behavior-y: none; /* Prevents pull-to-refresh */
+  -webkit-tap-highlight-color: transparent; /* Removes tap highlight on iOS */
+}
+
+/* Improved scrolling behavior */
+* {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+/* Selection colors */
+::selection {
+  background-color: hsl(var(--primary) / 20%);
+  color: hsl(var(--primary));
+}
+
+/* Hide elements when printing */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
   

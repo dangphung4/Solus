@@ -9,6 +9,7 @@ import {
   Clock,
   Compass,
   Fingerprint,
+  Info,
   Lightbulb,
   Lock,
   Sparkles,
@@ -16,20 +17,22 @@ import {
 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Navbar } from "@/Core/Shared/Navbar"
+import { useNavigate } from "react-router-dom"
+import fakePreview from "@/assets/fake-preview.png"
+
 
 export default function LandingPage() {
   const [email, setEmail] = useState("")
+  const navigate = useNavigate()
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Navbar />
       <main className="flex-1">
         {/* Hero Section */}
         <section className="py-20 md:py-28">
           <div className="container px-4 md:px-6">
             <div className="flex flex-col items-center text-center space-y-4">
-              <Badge className="mb-2">Now in Beta</Badge>
+              <Badge className="mb-2">Under production</Badge>
               <h1 className="text-3xl md:text-5xl font-bold tracking-tighter">
                 Singular clarity for <span className="text-primary">every decision</span>
               </h1>
@@ -53,6 +56,12 @@ export default function LandingPage() {
                 </div>
               </div>
               <p className="text-xs text-muted-foreground mt-2">No credit card required. Free plan available.</p>
+              <div className="flex flex-col items-center text-center space-y-4">
+                  <Button variant="outline" className="rounded-full transition-all hover:bg-primary/10" onClick={() => navigate('/about-us')}   >
+                    About Us
+                    <Info className="mr-2 h-4 w-4" />
+                  </Button>
+            </div>
             </div>
           </div>
         </section>
@@ -63,7 +72,7 @@ export default function LandingPage() {
             <div className="flex justify-center">
               <div className="relative w-full max-w-3xl aspect-video rounded-xl overflow-hidden border shadow-xl">
                 <img
-                  src="/placeholder.svg?height=720&width=1280"
+                  src={fakePreview}
                   alt="Solus App Preview"
                   className="object-cover w-full h-full"
                 />
@@ -390,7 +399,7 @@ export default function LandingPage() {
         </section>
 
         {/* CTA Section */}
-        <section className="py-20">
+        <section className="py-12">
           <div className="container px-4 md:px-6">
             <div className="flex flex-col items-center text-center space-y-4">
               <h2 className="text-3xl font-bold tracking-tighter">Ready to make better decisions?</h2>
@@ -416,29 +425,10 @@ export default function LandingPage() {
                 Be among the first to experience Solus. Limited spots available.
               </p>
             </div>
+
           </div>
         </section>
       </main>
-
-      <footer className="border-t py-6 md:py-0">
-        <div className="container flex flex-col md:flex-row items-center justify-between gap-4 md:h-16">
-          <div className="flex items-center gap-2">
-            <img src="/favicon.svg" alt="Solus Logo" className="w-6 h-6" />
-            <span className="text-sm font-medium">Solus © 2025</span>
-          </div>
-          <nav className="flex items-center gap-4 md:gap-6">
-            <a href="#" className="text-xs md:text-sm text-muted-foreground hover:text-foreground">
-              Privacy
-            </a>
-            <a href="#" className="text-xs md:text-sm text-muted-foreground hover:text-foreground">
-              Terms
-            </a>
-            <a href="#" className="text-xs md:text-sm text-muted-foreground hover:text-foreground">
-              Contact
-            </a>
-          </nav>
-        </div>
-      </footer>
     </div>
   )
 }

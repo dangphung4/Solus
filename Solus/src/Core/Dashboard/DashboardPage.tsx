@@ -1,21 +1,19 @@
 import { useAuth } from "@/hooks/useAuth"
-import { Navbar } from "@/Core/Shared/Navbar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Zap, Brain, Clock, CheckCircle } from "lucide-react"
 
 export default function DashboardPage() {
-  const { user } = useAuth()
+  const { currentUser } = useAuth()
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Navbar />
       <main className="flex-1 container py-8">
         <div className="flex flex-col gap-8">
           <section>
             <h1 className="text-3xl font-bold tracking-tight mb-2">
-              Welcome, {user?.displayName || "Decision Maker"}
+              Welcome, {currentUser?.displayName || "Decision Maker"}
             </h1>
             <p className="text-muted-foreground">
               What decision are you looking to make today?

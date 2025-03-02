@@ -1,6 +1,5 @@
 import { useState } from "react"
 import { useAuth } from "@/hooks/useAuth"
-import { Navbar } from "@/Core/Shared/Navbar"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -11,8 +10,8 @@ import { AlertCircle, CheckCircle } from "lucide-react"
 import { toast } from "sonner"
 
 export default function ProfilePage() {
-  const { user, updateUserProfile } = useAuth()
-  const [displayName, setDisplayName] = useState(user?.displayName || "")
+  const { currentUser, updateUserData } = useAuth()
+  const [displayName, setDisplayName] = useState(currentUser?.displayName || "")
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
@@ -24,7 +23,7 @@ export default function ProfilePage() {
     setIsLoading(true)
 
     try {
-      await updateUserProfile(displayName)
+      await updateUserData({ displayName })
       setSuccess(true)
       toast.success("Profile updated successfully")
     } catch (error) {
@@ -37,7 +36,6 @@ export default function ProfilePage() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Navbar />
       <main className="flex-1 container py-8">
         <div className="max-w-2xl mx-auto">
           <h1 className="text-3xl font-bold tracking-tight mb-6">Your Profile</h1>
@@ -46,12 +44,12 @@ export default function ProfilePage() {
             <CardHeader>
               <div className="flex items-center gap-4">
                 <Avatar className="h-16 w-16">
-                  <AvatarImage src={user?.photoURL || undefined} alt={user?.displayName || "User"} />
-                  <AvatarFallback>{user?.displayName?.charAt(0) || user?.email?.charAt(0) || "U"}</AvatarFallback>
+                  <AvatarImage src={currentUser?.photoURL || undefined} alt={currentUser?.displayName || "User"} />
+                  <AvatarFallback>{currentUser?.displayName?.charAt(0) || currentUser?.email?.charAt(0) || "U"}</AvatarFallback>
                 </Avatar>
                 <div>
-                  <CardTitle>{user?.displayName || "User"}</CardTitle>
-                  <CardDescription>{user?.email}</CardDescription>
+                  <CardTitle>{currentUser?.displayName || "User"}</CardTitle>
+                  <CardDescription>{currentUser?.email}</CardDescription>
                 </div>
               </div>
             </CardHeader>
@@ -85,7 +83,7 @@ export default function ProfilePage() {
                   <Label htmlFor="email">Email</Label>
                   <Input
                     id="email"
-                    value={user?.email || ""}
+                    value={currentUser?.email || ""}
                     disabled
                   />
                   <p className="text-xs text-muted-foreground">Email cannot be changed</p>

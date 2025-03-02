@@ -31,7 +31,7 @@ export default function SignUpPage() {
     setIsLoading(true)
 
     try {
-      await signUp(email, password, name)
+      await signUp(email, password)
       navigate("/dashboard")
     } catch (error) {
       if ((error as Error).message.includes("email-already-in-use")) {
