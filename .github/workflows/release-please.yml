@@ -19,4 +19,3 @@ jobs:
           target-branch: main
           config-file: .github/release-please-config.json
           release-type: node
-          path: Solus 
