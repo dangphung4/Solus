@@ -127,7 +127,11 @@ export function Navbar() {
                     <Button variant="ghost" className="relative h-10 w-10 rounded-full p-0 hover:bg-muted/50">
                       <Avatar className="h-10 w-10 border-2 border-primary/10">
                         {currentUser.photoURL ? (
-                          <AvatarImage src={currentUser.photoURL} alt={getDisplayName()} />
+                          <AvatarImage 
+                            src={currentUser.photoURL} 
+                            alt={getDisplayName()} 
+                            className="object-cover"
+                          />
                         ) : (
                           <AvatarFallback className="bg-primary/10 text-primary">
                             {getAvatarInitial()}
