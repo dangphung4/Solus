@@ -142,6 +142,73 @@ import {
                 </Card>
               </section>
   
+              {/* Contributing Developers section */}
+              <section className="space-y-6">
+                <div className="text-center mb-8">
+                  <div className="h-1 w-20 bg-gradient-to-r from-transparent via-primary to-transparent rounded-full mx-auto mb-4" />
+                  <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Contributing Developers</h2>
+                  <p className="text-muted-foreground max-w-2xl mx-auto mt-3">The talented people helping bring Solus to life</p>
+                </div>
+                
+                <Card className="overflow-hidden border border-muted/60 transition-all duration-500 hover:shadow-xl group">
+                  <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-transparent via-primary/70 to-transparent opacity-70 group-hover:opacity-100 transition-opacity duration-500" />
+                  <div className="md:flex">
+                    <div className="md:w-1/3 bg-gradient-to-br from-muted/80 to-background p-10 flex flex-col items-center justify-center space-y-6 relative overflow-hidden">
+                      <div className="absolute inset-0 bg-grid-white/[0.02] opacity-50" />
+                      <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-primary/10 rounded-full blur-3xl" />
+                      
+                      <Avatar className="h-32 w-32 border-4 border-primary/20 shadow-xl ring-2 ring-background transition-all duration-300 group-hover:scale-105">
+                        <AvatarImage src="https://github.com/hugo-mp3.png" alt="Alejandro Manrique Pineel" />
+                        <AvatarFallback className="text-2xl font-bold bg-primary/20">AP</AvatarFallback>
+                      </Avatar>
+                      
+                      <div className="text-center relative z-10">
+                        <h3 className="font-bold text-2xl bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/80">Alejandro Manrique Pineel</h3>
+                        <p className="text-muted-foreground font-medium">Contributing Developer</p>
+                      </div>
+                      
+                      <div className="flex space-x-3">
+                        <Button variant="outline" size="icon" className="rounded-full bg-background/50 backdrop-blur-sm hover:bg-primary/10 hover:text-primary transition-all duration-300 shadow-sm" asChild>
+                          <a href="https://github.com/hugo-mp3" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+                            <Github className="h-5 w-5" />
+                          </a>
+                        </Button>
+                        <Button variant="outline" size="icon" className="rounded-full bg-background/50 backdrop-blur-sm hover:bg-primary/10 hover:text-primary transition-all duration-300 shadow-sm" asChild>
+                          <a href="https://www.linkedin.com/in/hugo-manrique-pinell-6a6357325/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+                            <Linkedin className="h-5 w-5" />
+                          </a>
+                        </Button>
+                        <Button variant="outline" size="icon" className="rounded-full bg-background/50 backdrop-blur-sm hover:bg-primary/10 hover:text-primary transition-all duration-300 shadow-sm" asChild>
+                          <a href="https://www.hugomp.com" target="_blank" rel="noopener noreferrer" aria-label="Personal Website">
+                            <Globe className="h-5 w-5" />
+                          </a>
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    <div className="md:w-2/3 p-10 relative">
+                      <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -z-10" />
+                      <div className="space-y-5">
+                        <p className="text-lg leading-relaxed">
+                          Alejandro brings valuable expertise to Solus, helping to enhance the platform's capabilities and user experience.
+                        </p>
+                        <p className="leading-relaxed">
+                          With a passion for creating intuitive software solutions, Alejandro contributes to making Solus a powerful tool for decision-making.
+                        </p>
+                        <div className="pt-6">
+                          <Button className="group bg-gradient-to-r from-primary/90 to-primary/70 hover:from-primary hover:to-primary/80 text-primary-foreground shadow-md hover:shadow-lg transition-all duration-300" asChild>
+                            <a href="https://www.hugomp.com" className="flex items-center" target="_blank" rel="noopener noreferrer">
+                              Visit Hugo's Website
+                              <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                            </a>
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+              </section>
+  
               {/* Tech stack */}
               <section>
                 <div className="text-center mb-8">
