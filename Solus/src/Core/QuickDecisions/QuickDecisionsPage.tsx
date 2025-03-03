@@ -46,7 +46,7 @@ export default function QuickDecisionsPage() {
   };
 
   return (
-    <div className="container max-w-3xl py-8">
+    <div className="container max-w-3xl py-8 justify-self-center">
       <div className="flex flex-col gap-8">
         <section>
           <div className="flex items-center gap-2 mb-2">
@@ -60,8 +60,8 @@ export default function QuickDecisionsPage() {
 
         <section>
           <div className="mb-2 flex justify-between text-sm">
-            <div>Step {step} of {totalSteps}</div>
-            <div>{Math.round(progress)}%</div>
+            <div>Step {step > 3 ? 3 : step} of {totalSteps}</div>
+            <div>{Math.min(Math.round(progress),100)}%</div>
           </div>
           <Progress value={progress} className="h-2" />
         </section>
