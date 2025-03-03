@@ -1,0 +1,29 @@
+name: Conventional Commit Check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited]
+
+jobs:
+  check-commit-message:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          
+      - name: Install commitlint
+        run: |
+          npm install -g @commitlint/cli @commitlint/config-conventional
+          
+      - name: Copy commitlint config
+        run: cp .commitlintrc.json /tmp/commitlint.config.json
+        
+      - name: Validate PR title
+        run: |
+          echo "${{ github.event.pull_request.title }}" | commitlint --config /tmp/commitlint.config.json 

@@ -1,0 +1,49 @@
+name: Code Quality
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [20.x]
+        
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+        cache-dependency-path: '**/package-lock.json'
+        
+    - name: Install dependencies
+      run: |
+        cd Solus
+        npm ci --legacy-peer-deps
+      
+    # TODO: add prettier, linting, and type checking
+    # - name: Lint
+    #   run: |
+    #     cd Solus
+    #     npm run lint
+      
+    # - name: Type check
+    #   run: |
+    #     cd Solus
+    #     npm run typecheck
+    #   # Add this only if you have a typecheck script in package.json
+      
+    # - name: Format check
+    #   run: |
+    #     cd Solus
+    #     npm run format:check
+    #   # Add this only if you have a format:check script in package.json 

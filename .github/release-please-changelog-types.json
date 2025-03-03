@@ -1,0 +1,62 @@
+[
+  {
+    "type": "feat",
+    "section": "🚀 Features",
+    "hidden": false
+  },
+  {
+    "type": "fix",
+    "section": "🪲 Bug Fixes",
+    "hidden": false
+  },
+  {
+    "type": "docs",
+    "section": "📄 Documentation",
+    "hidden": false
+  },
+  {
+    "type": "style",
+    "section": "✔️ Style Changes",
+    "hidden": false
+  },
+  {
+    "type": "refactor",
+    "section": "♻️ Code Refactoring",
+    "hidden": false
+  },
+  {
+    "type": "perf",
+    "section": "🚅 Performance Improvements",
+    "hidden": false
+  },
+  {
+    "type": "test",
+    "section": "🧪 Tests",
+    "hidden": false
+  },
+  {
+    "type": "build",
+    "section": "📦 Builds",
+    "hidden": false
+  },
+  {
+    "type": "ci",
+    "section": "♾️ Continuous Integrations",
+    "hidden": false
+  },
+  {
+    "type": "chore",
+    "section": "🔧 Miscellaneous Chores",
+    "hidden": false
+  },
+  {
+    "type": "revert",
+    "section": "❌ Reverts",
+    "hidden": false
+  },
+  {
+    "type": "Penify",
+    "section": "✨ Penify",
+    "hidden": false
+  }
+] 

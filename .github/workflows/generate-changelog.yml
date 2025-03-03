@@ -1,0 +1,42 @@
+name: Generate Changelog
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'The tag to generate changelog for (e.g., v1.0.0)'
+        required: true
+        type: string
+      previous_tag:
+        description: 'The previous tag to compare against'
+        required: false
+        type: string
+
+jobs:
+  generate-changelog:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate Changelog
+        uses: mikepenz/release-changelog-builder-action@v5
+        with:
+          configuration: ".github/changelog.json"
+          outputFile: "CHANGELOG.md"
+          fromTag: ${{ inputs.previous_tag || '' }}
+          toTag: ${{ inputs.tag }}
+          # Ensure emojis are preserved
+          ignorePreReleases: "false"
+          fetchReleaseInformation: "true"
+          fetchReviewers: "true"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Upload Changelog
+        uses: actions/upload-artifact@v4
+        with:
+          name: changelog
+          path: CHANGELOG.md 

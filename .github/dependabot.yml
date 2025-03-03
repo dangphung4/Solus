@@ -1,0 +1,56 @@
+version: 2
+updates:
+  # Enable version updates for npm
+  - package-ecosystem: "npm"
+    directory: "/Solus"
+    schedule:
+      interval: "weekly"
+    # Limit the number of open pull requests for npm dependencies
+    open-pull-requests-limit: 10
+    # Specify labels for npm pull requests
+    labels:
+      - "dependencies"
+      - "npm"
+    # Set reviewers
+    reviewers:
+      - "dangphung4"
+    # Configure npm-specific options
+    registries:
+      - npm-registry
+    # Handle peer dependencies properly 
+    versioning-strategy: increase
+    # Add options to handle React type issues
+    ignore:
+      # Keep React types in sync with React version
+      - dependency-name: "@types/react"
+        update-types: ["version-update:semver-major"]
+      # Ignore types updates that might break builds
+      - dependency-name: "@types/*"
+        update-types: ["version-update:semver-major"]
+    # Use options that match your CI build
+    commit-message:
+      prefix: "npm"
+      include: "scope"
+
+  # Enable version updates for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    # Limit the number of open pull requests for GitHub Actions
+    open-pull-requests-limit: 5
+    # Specify labels for GitHub Actions pull requests
+    labels:
+      - "dependencies"
+      - "github-actions"
+    # Set reviewers
+    reviewers:
+      - "dangphung4"
+
+# Define registries
+registries:
+  npm-registry:
+    type: npm-registry
+    url: https://registry.npmjs.org
+    token: ${{secrets.NPM_TOKEN}}
+    replaces-base: true 
