@@ -5,7 +5,7 @@ import { AuthContext } from '@/hooks/useAuth';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import { ReactNode } from 'react';
-import { Home, Zap, Brain, LayoutDashboard, LogIn } from 'lucide-react';
+import { Home, Zap, Brain, LayoutDashboard, LogIn, PencilLine } from 'lucide-react';
 
 /**
  * A functional component that renders a mobile navigation bar.
@@ -132,6 +132,15 @@ export function MobileNavigation() {
               label="Deep"
               icon={
                 <Brain size={20} className="text-current" />
+              }
+            />
+            
+            <NavLink 
+              to="/reflections"
+              isActive={isActive('/reflections')}
+              label="Journal"
+              icon={
+                <PencilLine size={20} className="text-current" />
               }
             />
             

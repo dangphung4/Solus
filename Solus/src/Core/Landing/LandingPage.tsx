@@ -18,13 +18,22 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { useNavigate } from "react-router-dom"
-import fakePreview from "@/assets/fake-preview.png"
-import quickDecision from "@/assets/quick-decision.png"
+import quickDecisionDark from "@/assets/quick-decision-preview-dark.png"
+import quickDecisionLight from "@/assets/quick-decision-preview-light.png"
+import deepReflectionDark from "@/assets/deep-reflection-preview-dark.png"
+import deepReflectionLight from "@/assets/deep-reflection-preview-light.png"
+import dashboardPreviewDark from "@/assets/solus-dashboard-preview-dark.png"
+import dashboardPreviewLight from "@/assets/solus-dashboard-preview-light.png"
+import journalPreviewDark from "@/assets/solus-journal-preview-dark.png"
+import journalPreviewLight from "@/assets/solus-journal-preview-light.png"
+import { useTheme } from "@/lib/ThemeProvider"
+
 
 export default function LandingPage() {
   const [email, setEmail] = useState("")
   const [, setScrolled] = useState(false)
   const navigate = useNavigate()
+  const { theme } = useTheme()
 
   // Handle scroll effect
   useEffect(() => {
@@ -107,7 +116,7 @@ export default function LandingPage() {
               <div className="relative w-full max-w-4xl aspect-video rounded-xl overflow-hidden border shadow-2xl transition-all duration-500 hover:shadow-primary/20">
                 <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-transparent z-10 opacity-70" />
                 <img
-                  src={fakePreview}
+                  src={dashboardPreviewDark}
                   alt="Solus App Preview"
                   className="object-cover w-full h-full transition-all duration-700 hover:scale-105"
                 />
@@ -188,7 +197,7 @@ export default function LandingPage() {
                   </div>
                   <div className="bg-gradient-to-br from-background to-muted rounded-xl p-6 border shadow-lg">
                     <img
-                      src={quickDecision}
+                      src={quickDecisionDark}
                       height={400}
                       width={400}
                       alt="Quick Decision Mode"
