@@ -14,17 +14,28 @@ import {
   Lock,
   Sparkles,
   Zap,
+  BookOpen,
+  BarChart,
 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { useNavigate } from "react-router-dom"
-import fakePreview from "@/assets/fake-preview.png"
+import quickDecisionDark from "@/assets/quick-decision-preview-dark.png"
+import quickDecisionLight from "@/assets/quick-decision-preview-light.png"
+import deepReflectionDark from "@/assets/deep-reflection-preview-dark.png"
+import deepReflectionLight from "@/assets/deep-reflection-preview-light.png"
+import dashboardPreviewDark from "@/assets/solus-dashboard-preview-dark.png"
+import dashboardPreviewLight from "@/assets/solus-dashboard-preview-light.png"
+import journalPreviewDark from "@/assets/solus-journal-preview-dark.png"
+import journalPreviewLight from "@/assets/solus-journal-preview-light.png"
+import { useTheme } from "@/lib/ThemeProvider"
 
 
 export default function LandingPage() {
   const [email, setEmail] = useState("")
   const [, setScrolled] = useState(false)
   const navigate = useNavigate()
+  const { theme } = useTheme()
 
   // Handle scroll effect
   useEffect(() => {
@@ -40,6 +51,11 @@ export default function LandingPage() {
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
+
+  // Get the appropriate image based on the current theme
+  const getThemeImage = (darkImage: string, lightImage: string) => {
+    return theme === 'dark' ? darkImage : lightImage
+  }
 
   return (
     <div className="flex flex-col min-h-screen relative overflow-hidden">
@@ -104,12 +120,14 @@ export default function LandingPage() {
           <div className="absolute inset-0 bg-gradient-to-b from-background via-muted/30 to-background -z-10" />
           <div className="container mx-auto px-4 md:px-6 max-w-7xl">
             <div className="flex justify-center">
-              <div className="relative w-full max-w-4xl aspect-video rounded-xl overflow-hidden border shadow-2xl transition-all duration-500 hover:shadow-primary/20">
+              <div className="relative w-full max-w-4xl aspect-video rounded-xl overflow-hidden border border-primary/30 shadow-2xl transition-all duration-500 hover:shadow-primary/40 group">
                 <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-transparent z-10 opacity-70" />
+                <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 z-0"></div>
+                <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 via-primary/10 to-primary/20 rounded-xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 z-0"></div>
                 <img
-                  src={fakePreview}
+                  src={getThemeImage(dashboardPreviewDark, dashboardPreviewLight)}
                   alt="Solus App Preview"
-                  className="object-cover w-full h-full transition-all duration-700 hover:scale-105"
+                  className="object-cover w-full h-full transition-all duration-700 hover:scale-105 z-10 relative"
                 />
               </div>
             </div>
@@ -186,11 +204,14 @@ export default function LandingPage() {
                       </li>
                     </ul>
                   </div>
-                  <div className="bg-gradient-to-br from-background to-muted rounded-xl p-6 border shadow-lg">
+                  <div className="bg-gradient-to-br from-background to-muted rounded-xl p-6 border shadow-lg group relative">
+                    <div className="absolute -inset-1 bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 rounded-xl blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
                     <img
-                      src="/placeholder.svg?height=400&width=400"
+                      src={getThemeImage(quickDecisionDark, quickDecisionLight)}
+                      height={400}
+                      width={400}
                       alt="Quick Decision Mode"
-                      className="w-full rounded-lg transition-all duration-500 hover:scale-105"
+                      className="w-full rounded-lg transition-all duration-500 hover:scale-105 relative z-10"
                     />
                   </div>
                 </div>
@@ -229,16 +250,117 @@ export default function LandingPage() {
                       </li>
                     </ul>
                   </div>
-                  <div className="bg-gradient-to-br from-background to-muted rounded-xl p-6 border shadow-lg">
+                  <div className="bg-gradient-to-br from-background to-muted rounded-xl p-6 border shadow-lg group relative">
+                    <div className="absolute -inset-1 bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 rounded-xl blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
                     <img
-                      src="/placeholder.svg?height=400&width=400"
+                      src={getThemeImage(deepReflectionDark, deepReflectionLight)}
                       alt="Deep Reflection Mode"
-                      className="w-full rounded-lg transition-all duration-500 hover:scale-105"
+                      className="w-full rounded-lg transition-all duration-500 hover:scale-105 relative z-10"
                     />
                   </div>
                 </div>
               </TabsContent>
             </Tabs>
+          </div>
+        </section>
+
+        {/* Journal & Dashboard Features */}
+        <section id="journal-dashboard" className="py-20 relative">
+          <div className="absolute inset-0 bg-gradient-to-b from-muted/20 via-background to-background -z-10" />
+          <div className="container mx-auto px-4 md:px-6 max-w-7xl">
+            <div className="flex flex-col items-center text-center space-y-6 mb-12">
+              <div className="h-1 w-20 bg-gradient-to-r from-transparent via-primary to-transparent rounded-full mb-2" />
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tighter">
+                Track Your Growth with Smart Tools
+              </h2>
+              <p className="text-muted-foreground max-w-[700px]">
+                Build your decision intelligence with our powerful tracking and insights features.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-12 max-w-6xl mx-auto">
+              {/* Journal Feature */}
+              <div className="flex flex-col space-y-6">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center">
+                    <BookOpen className="h-5 w-5 text-primary" />
+                  </div>
+                  <h3 className="text-2xl font-bold">Decision Journal</h3>
+                </div>
+                <p className="text-muted-foreground mb-4">
+                  Build a personal record of your decisions and outcomes, helping you learn from experience and make better future choices.
+                </p>
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-3 transition-all duration-300 hover:translate-x-1">
+                    <div className="h-6 w-6 rounded-full bg-primary/20 flex items-center justify-center">
+                      <CheckCircle className="h-4 w-4 text-primary" />
+                    </div>
+                    <span>Automatic decision history tracking</span>
+                  </li>
+                  <li className="flex items-start gap-3 transition-all duration-300 hover:translate-x-1">
+                    <div className="h-6 w-6 rounded-full bg-primary/20 flex items-center justify-center">
+                      <CheckCircle className="h-4 w-4 text-primary" />
+                    </div>
+                    <span>Follow-up prompts for outcome reflection</span>
+                  </li>
+                  <li className="flex items-start gap-3 transition-all duration-300 hover:translate-x-1">
+                    <div className="h-6 w-6 rounded-full bg-primary/20 flex items-center justify-center">
+                      <CheckCircle className="h-4 w-4 text-primary" />
+                    </div>
+                    <span>Build a personal database of decision history</span>
+                  </li>
+                </ul>
+                <div className="bg-gradient-to-br from-background to-muted rounded-xl p-4 border shadow-lg mt-4 group relative">
+                  <div className="absolute -inset-1 bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 rounded-xl blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+                  <img
+                    src={getThemeImage(journalPreviewDark, journalPreviewLight)}
+                    alt="Decision Journal"
+                    className="w-full rounded-lg transition-all duration-500 hover:scale-105 relative z-10"
+                  />
+                </div>
+              </div>
+
+              {/* Dashboard Feature */}
+              <div className="flex flex-col space-y-6">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center">
+                    <BarChart className="h-5 w-5 text-primary" />
+                  </div>
+                  <h3 className="text-2xl font-bold">Insights Dashboard</h3>
+                </div>
+                <p className="text-muted-foreground mb-4">
+                  Visualize your decision patterns and gain deep insights into your decision-making style and preferences.
+                </p>
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-3 transition-all duration-300 hover:translate-x-1">
+                    <div className="h-6 w-6 rounded-full bg-primary/20 flex items-center justify-center">
+                      <CheckCircle className="h-4 w-4 text-primary" />
+                    </div>
+                    <span>Personal insights showing decision patterns</span>
+                  </li>
+                  <li className="flex items-start gap-3 transition-all duration-300 hover:translate-x-1">
+                    <div className="h-6 w-6 rounded-full bg-primary/20 flex items-center justify-center">
+                      <CheckCircle className="h-4 w-4 text-primary" />
+                    </div>
+                    <span>Track success rates and satisfaction</span>
+                  </li>
+                  <li className="flex items-start gap-3 transition-all duration-300 hover:translate-x-1">
+                    <div className="h-6 w-6 rounded-full bg-primary/20 flex items-center justify-center">
+                      <CheckCircle className="h-4 w-4 text-primary" />
+                    </div>
+                    <span>AI-powered recommendations based on your history</span>
+                  </li>
+                </ul>
+                <div className="bg-gradient-to-br from-background to-muted rounded-xl p-4 border shadow-lg mt-4 group relative">
+                  <div className="absolute -inset-1 bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 rounded-xl blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+                  <img
+                    src={getThemeImage(dashboardPreviewDark, dashboardPreviewLight)}
+                    alt="Insights Dashboard"
+                    className="w-full rounded-lg transition-all duration-500 hover:scale-105 relative z-10"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 

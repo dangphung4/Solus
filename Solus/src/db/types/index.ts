@@ -9,6 +9,9 @@ export * from './UserPreferences';
 // Decision types
 export * from './Decision';
 
+// Reflection types
+export * from './Reflection';
+
 // AI types
 export * from './AI';
 
