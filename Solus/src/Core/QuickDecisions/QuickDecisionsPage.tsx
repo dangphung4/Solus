@@ -104,7 +104,7 @@ export default function QuickDecisionsPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="flex gap-2">
+                <div className="flex gap-2 items-center">
                   <Textarea
                     placeholder="e.g., What should I eat for dinner tonight?"
                     value={decision}
@@ -138,7 +138,7 @@ export default function QuickDecisionsPage() {
               <CardContent>
                 <div className="space-y-3">
                   {options.map((option, index) => (
-                    <div key={index} className="flex gap-2">
+                    <div key={index} className="flex gap-2 items-center">
                       <Input
                         placeholder={`Option ${index + 1}`}
                         value={option}
