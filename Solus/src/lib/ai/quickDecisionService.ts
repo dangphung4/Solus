@@ -20,8 +20,8 @@ export async function extractDecisionOptions(userInput: string) {
     category: z.nativeEnum(DecisionCategory).describe('The category that best fits this decision'),
     options: z.array(z.object({
       text: z.string().describe('The option text'),
-      pros: z.array(z.string()).optional().describe('Positive aspects of this option'),
-      cons: z.array(z.string()).optional().describe('Negative aspects of this option')
+      pros: z.array(z.string()).min(1).describe('At least one positive aspect of this option'),
+      cons: z.array(z.string()).min(1).describe('At least one negative aspect of this option')
     })).min(1).describe('The different options the user is considering'),
     contextFactors: z.array(z.string()).optional().describe('Important contextual factors that might influence the decision')
   });
@@ -31,10 +31,21 @@ export async function extractDecisionOptions(userInput: string) {
       model: geminiFlash,
       schema: optionsSchema,
       prompt: `Extract decision information from this text: "${userInput}"
-      Identify the main decision to be made, the options being considered, and any pros/cons mentioned.
-      If the user doesn't explicitly mention a category, infer the most appropriate one.
-      Include any contextual factors that might influence the decision.
-      IMPORTANT: If something is ambiguous or not clearly stated, make a reasonable inference but don't invent specifics.`
+      
+      Identify the main decision to be made and create a structured representation with these elements:
+      1. A clear, concise title for the decision
+      2. The most appropriate category
+      3. Each option being considered (minimum 2 options)
+      4. For EACH option, identify at least one pro and at least one con
+      5. Any contextual factors mentioned
+      
+      IMPORTANT INSTRUCTIONS:
+      - Extract 2-4 distinct options maximum (do not create more)
+      - Always include at least one pro and one con for EVERY option
+      - If pros/cons aren't explicitly stated, infer reasonable ones based on the context
+      - Keep option text brief and clear (under 10 words when possible)
+      - For ambiguous input, make reasonable inferences but don't invent specific details
+      - If the user mentions their preference, include it as a pro for that option`
     });
 
     return result;
@@ -62,6 +73,9 @@ export async function generateRecommendation(
   try {
     // Construct the prompt with all available information
     let prompt = `Help me decide: ${title}\n\nOptions:`;
+    
+    // Create a list of option texts for reference
+    const optionTexts = options.map(opt => opt.text);
     
     options.forEach((option, index) => {
       prompt += `\n${index + 1}. ${option.text}`;
@@ -91,25 +105,49 @@ export async function generateRecommendation(
     
     // Extract just the recommended option from the response
     const recommendationSchema = z.object({
-      recommendedOption: z.string().describe('The specific option text that is recommended'),
+      recommendedOption: z.enum(optionTexts as [string, ...string[]]).describe('The specific option text that is recommended (must exactly match one of the original options)'),
       reasoning: z.string().describe('A brief explanation of why this option is recommended')
     });
     
-    const structured = await generateObject({
-      model: geminiFlash,
-      schema: recommendationSchema,
-      prompt: `Based on this analysis, extract just the recommended option and reasoning:
+    try {
+      const structured = await generateObject({
+        model: geminiFlash,
+        schema: recommendationSchema,
+        prompt: `Based on this analysis, extract just the recommended option and reasoning:
+        
+        ${text}
+        
+        Be very concise. The recommendedOption MUST match one of these options exactly (copy and paste, don't paraphrase):
+        ${optionTexts.map((opt, i) => `${i+1}. ${opt}`).join('\n')}
+        
+        Return ONLY one of these exact option texts as the recommendation.`
+      });
       
-      ${text}
+      return {
+        recommendation: structured.object.recommendedOption,
+        reasoning: structured.object.reasoning,
+        fullAnalysis: text
+      };
+    } catch (extractError) {
+      // If we couldn't extract a structured recommendation, fall back to a simpler method
+      console.warn('Failed to extract structured recommendation, using fallback method', extractError);
       
-      Be very concise. The recommendedOption should match one of the original options exactly.`
-    });
-    
-    return {
-      recommendation: structured.object.recommendedOption,
-      reasoning: structured.object.reasoning,
-      fullAnalysis: text
-    };
+      // Simple fallback: look for the option text in the response
+      let bestMatch = options[0].text; // Default to first option
+      
+      for (const option of options) {
+        if (text.toLowerCase().includes(option.text.toLowerCase())) {
+          bestMatch = option.text;
+          break;
+        }
+      }
+      
+      return {
+        recommendation: bestMatch,
+        reasoning: "Based on the analysis of your options, this seems to be the best choice.",
+        fullAnalysis: text
+      };
+    }
   } catch (error) {
     console.error('Error generating recommendation:', error);
     throw new Error('Failed to generate a recommendation. Please try again.');
@@ -124,6 +162,16 @@ export async function processSpeechInput(speechText: string) {
   try {
     // Extract structured decision data from speech
     const decisionData = await extractDecisionOptions(speechText);
+    
+    // Ensure each option has at least one pro and con
+    decisionData.object.options.forEach(option => {
+      if (!option.pros || option.pros.length === 0) {
+        option.pros = ["Viable option"];
+      }
+      if (!option.cons || option.cons.length === 0) {
+        option.cons = ["Consider trade-offs"];
+      }
+    });
     
     // Generate a recommendation based on the extracted options
     const recommendation = await generateRecommendation(

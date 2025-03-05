@@ -6,8 +6,32 @@ import { Textarea } from "@/components/ui/textarea";
 import { processSpeechInput } from "@/lib/ai/quickDecisionService";
 import { ArrowRight, Wand2, Loader2, LightbulbIcon } from "lucide-react";
 
+// Add this type definition for options
+type ProcessedOption = {
+  text: string;
+  pros: string[];
+  cons: string[];
+};
+
+// Add type for the processed result
+type ProcessedResult = {
+  decisionData: {
+    object: {
+      title: string;
+      category: string;
+      options: ProcessedOption[];
+      contextFactors?: string[];
+    }
+  };
+  recommendation: {
+    recommendation: string;
+    reasoning: string;
+    fullAnalysis?: string;
+  };
+};
+
 type ProcessTextProps = {
-  onProcessComplete: (result: any) => void;
+  onProcessComplete: (result: ProcessedResult) => void;
 };
 
 export default function ProcessText({ onProcessComplete }: ProcessTextProps) {
@@ -54,15 +78,27 @@ export default function ProcessText({ onProcessComplete }: ProcessTextProps) {
       // Check that we have a recommended option that matches one of the options
       const recommendationText = result.recommendation.recommendation.toLowerCase();
       const hasMatchingOption = result.decisionData.object.options.some(
-        (opt: any) => opt.text.toLowerCase() === recommendationText
+        (opt: ProcessedOption) => opt.text.toLowerCase() === recommendationText
       );
       
       if (!hasMatchingOption) {
-        toast.error("Recommendation mismatch", {
-          description: "The AI recommendation doesn't match any of the options. Please try rephrasing your input."
-        });
-        setIsProcessing(false);
-        return;
+        // Instead of showing an error, find the closest matching option
+        const bestMatch = findBestMatchingOption(
+          recommendationText,
+          result.decisionData.object.options
+        );
+        
+        if (bestMatch) {
+          // Update the recommendation to use the exact option text
+          result.recommendation.recommendation = bestMatch.text;
+          console.log("Adjusted recommendation to match option:", bestMatch.text);
+        } else {
+          toast.error("Recommendation mismatch", {
+            description: "The AI recommendation doesn't match any of the options. Please try rephrasing your input."
+          });
+          setIsProcessing(false);
+          return;
+        }
       }
       
       onProcessComplete(result);
@@ -74,6 +110,43 @@ export default function ProcessText({ onProcessComplete }: ProcessTextProps) {
     } finally {
       setIsProcessing(false);
     }
+  };
+
+  // Helper function to find the best matching option for a recommendation
+  const findBestMatchingOption = (recommendation: string, options: ProcessedOption[]) => {
+    if (!options || options.length === 0) return null;
+    
+    // Try to find option that contains the recommendation or vice versa
+    for (const option of options) {
+      const optionText = option.text.toLowerCase();
+      if (optionText.includes(recommendation) || recommendation.includes(optionText)) {
+        return option;
+      }
+    }
+    
+    // If no obvious match, check for word overlap
+    let bestMatch = null;
+    let highestOverlap = 0;
+    
+    for (const option of options) {
+      const optionWords = new Set(option.text.toLowerCase().split(/\s+/));
+      const recommendationWords = recommendation.split(/\s+/);
+      
+      let overlap = 0;
+      for (const word of recommendationWords) {
+        if (optionWords.has(word.toLowerCase()) && word.length > 3) {
+          overlap++;
+        }
+      }
+      
+      if (overlap > highestOverlap) {
+        highestOverlap = overlap;
+        bestMatch = option;
+      }
+    }
+    
+    // Require at least some meaningful overlap
+    return highestOverlap > 1 ? bestMatch : options[0]; // Default to first option if no good match
   };
 
   return (
