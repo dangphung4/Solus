@@ -19,7 +19,7 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { useNavigate } from "react-router-dom"
 import fakePreview from "@/assets/fake-preview.png"
-
+import quickDecision from "@/assets/quick-decision.png"
 
 export default function LandingPage() {
   const [email, setEmail] = useState("")
@@ -188,7 +188,9 @@ export default function LandingPage() {
                   </div>
                   <div className="bg-gradient-to-br from-background to-muted rounded-xl p-6 border shadow-lg">
                     <img
-                      src="/placeholder.svg?height=400&width=400"
+                      src={quickDecision}
+                      height={400}
+                      width={400}
                       alt="Quick Decision Mode"
                       className="w-full rounded-lg transition-all duration-500 hover:scale-105"
                     />
@@ -231,7 +233,7 @@ export default function LandingPage() {
                   </div>
                   <div className="bg-gradient-to-br from-background to-muted rounded-xl p-6 border shadow-lg">
                     <img
-                      src="/placeholder.svg?height=400&width=400"
+                      src="/deep-reflection.png?height=400&width=400"
                       alt="Deep Reflection Mode"
                       className="w-full rounded-lg transition-all duration-500 hover:scale-105"
                     />
