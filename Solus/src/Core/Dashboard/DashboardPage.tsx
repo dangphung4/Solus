@@ -6,7 +6,6 @@ import {
   Activity, 
   ArrowUpRight, 
   Award, 
-  BarChart3, 
   Brain, 
   Calendar, 
   ChevronRight, 
@@ -17,23 +16,17 @@ import {
   Flame,
   Glasses,
   History,
-  LineChart,
   Lightbulb,
   Milestone,
   MoreHorizontal,
-  PieChart,
-  Star,
   Sparkles,
-  Waves,
   ThumbsUp,
-  Timer,
   Zap,
   LucideIcon
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 // Chart type definitions
