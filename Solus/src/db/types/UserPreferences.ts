@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * UserPreferences interfaces for the database
  * Contains user settings, preferences, and personalization data

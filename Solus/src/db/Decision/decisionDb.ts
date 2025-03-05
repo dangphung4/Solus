@@ -1,8 +1,9 @@
-import { collection, query, where, getDocs, orderBy, limit } from 'firebase/firestore';
+import { collection, query, where, getDocs, orderBy, limit, updateDoc, doc } from 'firebase/firestore';
 import { db } from '@/db/db';
 import { Decision, DecisionCategory, DecisionStatus } from '@/db/types/Decision';
 import { getQuickDecision, getUserQuickDecisions } from './Quick/quickDecisionDb';
 import { getDeepDecision, getUserDeepDecisions } from './Deep/deepDecisionDb';
+import { Timestamp } from 'firebase/firestore';
 
 /**
  * Collection names
@@ -238,6 +239,87 @@ export const getDecisionCountsByCategory = async (
     return counts;
   } catch (error) {
     console.error('Error getting decision counts by category:', error);
+    throw error;
+  }
+};
+
+/**
+ * Update a decision's status
+ * Works for both quick and deep decisions
+ */
+export const updateDecisionStatus = async (id: string, status: DecisionStatus): Promise<void> => {
+  try {
+    // First determine if it's a quick or deep decision
+    const decision = await getDecision(id);
+    
+    if (!decision) {
+      throw new Error(`Decision with id ${id} not found`);
+    }
+    
+    // Update status based on decision type
+    if (decision.type === 'quick') {
+      const quickCollection = collection(db, QUICK_COLLECTION);
+      await updateDoc(doc(quickCollection, id), { 
+        status, 
+        updatedAt: Timestamp.fromDate(new Date()) 
+      });
+    } else if (decision.type === 'deep') {
+      const deepCollection = collection(db, DEEP_COLLECTION);
+      await updateDoc(doc(deepCollection, id), { 
+        status, 
+        updatedAt: Timestamp.fromDate(new Date()) 
+      });
+    }
+  } catch (error) {
+    console.error('Error updating decision status:', error);
+    throw error;
+  }
+};
+
+/**
+ * Get decisions with a specific status for a user
+ */
+export const getUserDecisionsWithStatus = async (userId: string, status: DecisionStatus): Promise<Decision[]> => {
+  try {
+    // Get quick decisions with the specified status
+    const quickQuery = query(
+      collection(db, QUICK_COLLECTION),
+      where('userId', '==', userId),
+      where('status', '==', status),
+      orderBy('createdAt', 'desc')
+    );
+    
+    // Get deep decisions with the specified status
+    const deepQuery = query(
+      collection(db, DEEP_COLLECTION),
+      where('userId', '==', userId),
+      where('status', '==', status),
+      orderBy('createdAt', 'desc')
+    );
+    
+    // Execute both queries
+    const [quickSnapshot, deepSnapshot] = await Promise.all([
+      getDocs(quickQuery),
+      getDocs(deepQuery)
+    ]);
+    
+    // Process results
+    const quickDecisions: Decision[] = [];
+    quickSnapshot.forEach(doc => {
+      quickDecisions.push(convertDates(doc.data()));
+    });
+    
+    const deepDecisions: Decision[] = [];
+    deepSnapshot.forEach(doc => {
+      deepDecisions.push(convertDates(doc.data()));
+    });
+    
+    // Combine and sort by date
+    return [...quickDecisions, ...deepDecisions].sort(
+      (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
+    );
+  } catch (error) {
+    console.error('Error getting user decisions with status:', error);
     throw error;
   }
 }; 
