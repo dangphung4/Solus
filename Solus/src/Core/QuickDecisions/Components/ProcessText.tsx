@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { processSpeechInput } from "@/lib/ai/quickDecisionService";
-import { ArrowRight, Wand2 } from "lucide-react";
+import { ArrowRight, Wand2, Loader2, LightbulbIcon } from "lucide-react";
 
 type ProcessTextProps = {
   onProcessComplete: (result: any) => void;
@@ -77,8 +77,8 @@ export default function ProcessText({ onProcessComplete }: ProcessTextProps) {
   };
 
   return (
-    <Card className="w-full">
-      <CardHeader className="pb-3">
+    <Card className="w-full border-primary/10 shadow-md transition-all hover:shadow-lg">
+      <CardHeader className="pb-3 bg-gradient-to-r from-primary/5 to-background">
         <CardTitle className="text-xl flex items-center">
           <Wand2 className="h-5 w-5 mr-2 text-primary" />
           Describe Your Decision
@@ -89,15 +89,29 @@ export default function ProcessText({ onProcessComplete }: ProcessTextProps) {
       </CardHeader>
       
       <CardContent className="space-y-4">
-        <Textarea 
-          value={inputText}
-          onChange={(e) => setInputText(e.target.value)}
-          placeholder="e.g., I need to decide between working from home or going to the office tomorrow. At home I'm more comfortable but get distracted, at the office I'm more focused but have a long commute."
-          className="min-h-[180px] md:min-h-[200px] resize-none"
-        />
+        <div className="relative">
+          <Textarea 
+            value={inputText}
+            onChange={(e) => setInputText(e.target.value)}
+            placeholder="e.g., I need to decide between working from home or going to the office tomorrow. At home I'm more comfortable but get distracted, at the office I'm more focused but have a long commute."
+            className="min-h-[180px] md:min-h-[200px] resize-none transition-all focus:border-primary focus:ring-primary"
+            disabled={isProcessing}
+          />
+          {isProcessing && (
+            <div className="absolute inset-0 flex items-center justify-center bg-background/80 rounded-md">
+              <div className="text-center">
+                <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto mb-2" />
+                <p className="text-sm font-medium">Processing your decision...</p>
+              </div>
+            </div>
+          )}
+        </div>
         
-        <div className="space-y-2">
-          <p className="text-sm text-muted-foreground">Try these examples:</p>
+        <div className="space-y-2 animate-fadeIn">
+          <p className="text-sm text-muted-foreground flex items-center gap-1.5">
+            <LightbulbIcon className="h-4 w-4 text-yellow-500" />
+            Try these examples:
+          </p>
           <div className="flex flex-wrap gap-2">
             {examples.map((example, index) => (
               <Button 
@@ -105,7 +119,8 @@ export default function ProcessText({ onProcessComplete }: ProcessTextProps) {
                 variant="outline" 
                 size="sm" 
                 onClick={() => handleExample(example)}
-                className="text-xs whitespace-normal text-left h-auto py-2 flex-grow md:flex-grow-0"
+                className="text-xs whitespace-normal text-left h-auto py-2 flex-grow md:flex-grow-0 transition-all hover:bg-primary/5 hover:border-primary/30"
+                disabled={isProcessing}
               >
                 {example.length > 40 ? example.substring(0, 40) + '...' : example}
               </Button>
@@ -114,14 +129,17 @@ export default function ProcessText({ onProcessComplete }: ProcessTextProps) {
         </div>
       </CardContent>
       
-      <CardFooter className="pt-2">
+      <CardFooter className="pt-2 bg-gradient-to-r from-background to-primary/5">
         <Button 
           onClick={handleSubmit} 
           disabled={isProcessing || !inputText.trim()} 
-          className="w-full md:w-auto ml-auto"
+          className="w-full md:w-auto ml-auto transition-all hover:bg-primary/90"
         >
           {isProcessing ? (
-            <>Processing<span className="loading">...</span></>
+            <>
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              Processing...
+            </>
           ) : (
             <>
               Process Decision
