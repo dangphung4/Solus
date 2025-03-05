@@ -158,7 +158,7 @@ import {
                       <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-primary/10 rounded-full blur-3xl" />
                       
                       <Avatar className="h-32 w-32 border-4 border-primary/20 shadow-xl ring-2 ring-background transition-all duration-300 group-hover:scale-105">
-                        <AvatarImage src="https://github.com/hugo-mp3.png" alt="Alejandro Manrique Pineel" />
+                        <AvatarImage src="https://github.com/hugo-mp3.png" alt="Alejandro Manrique Pinell" />
                         <AvatarFallback className="text-2xl font-bold bg-primary/20">AP</AvatarFallback>
                       </Avatar>
                       
