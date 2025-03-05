@@ -1,11 +1,12 @@
 import { useState } from "react";
+import { useSpeechToText } from "@/hooks/useSpeechToText";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { Zap, ArrowRight, Clock, CheckCircle2 } from "lucide-react";
+import { Zap, ArrowRight, Clock, CheckCircle2, Mic } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 
 export default function QuickDecisionsPage() {
@@ -13,6 +14,10 @@ export default function QuickDecisionsPage() {
   const [decision, setDecision] = useState("");
   const [options, setOptions] = useState<string[]>([""]);
   const [feeling, setFeeling] = useState<string>("");
+  const [activeRecordingIndex, setActiveRecordingIndex] = useState<number | null>(null); // Track which specific button is recording
+  const [isDecisionRecording, setIsDecisionRecording] = useState(false);
+
+  const { handleRecord, isRecording } = useSpeechToText();
   
   const totalSteps = 3;
   const progress = (step / totalSteps) * 100;
@@ -43,6 +48,29 @@ export default function QuickDecisionsPage() {
     // This would typically send data to the backend
     // For now, we'll just go to the results step
     setStep(4);
+  };
+
+  const handleMicButtonPress = async (optionIndex?: number) => {
+    let transcriptionText: string | undefined = "";
+    // Logic for option inputs
+    if (optionIndex !== undefined){
+      setActiveRecordingIndex(optionIndex);
+      transcriptionText = await handleRecord() || "";
+      const newOptions = [...options];
+      newOptions[optionIndex] = transcriptionText;
+      setOptions(newOptions);
+      // Transcription completed and returned
+      if (transcriptionText && transcriptionText !== ""){
+        setActiveRecordingIndex(null);
+      }
+    }else{
+      setIsDecisionRecording(true);
+      transcriptionText = await handleRecord() || "";
+      setDecision(transcriptionText);
+      if (transcriptionText && transcriptionText !== ""){
+        setIsDecisionRecording(false);
+      }
+    }
   };
 
   return (
@@ -76,12 +104,20 @@ export default function QuickDecisionsPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <Textarea
-                  placeholder="e.g., What should I eat for dinner tonight?"
-                  value={decision}
-                  onChange={(e) => setDecision(e.target.value)}
-                  className="min-h-24"
-                />
+                <div className="flex gap-2">
+                  <Textarea
+                    placeholder="e.g., What should I eat for dinner tonight?"
+                    value={decision}
+                    onChange={(e) => setDecision(e.target.value)}
+                    className="min-h-24"
+                  />
+                  <Button
+                    variant={isDecisionRecording ? "destructive" : "outline"}
+                    onClick={() => {handleMicButtonPress()}}
+                  >
+                    <Mic className="h-4 w-4" />
+                  </Button>
+                </div>
               </CardContent>
               <CardFooter className="flex justify-end">
                 <Button onClick={handleNext} disabled={!decision.trim()}>
@@ -108,6 +144,12 @@ export default function QuickDecisionsPage() {
                         value={option}
                         onChange={(e) => handleOptionChange(index, e.target.value)}
                       />
+                      <Button
+                        variant={(isRecording && activeRecordingIndex === index) ? "destructive" : "outline"}
+                        onClick={() => {handleMicButtonPress(index)}}
+                      >
+                        <Mic className="h-4 w-4" />
+                      </Button>
                     </div>
                   ))}
                   <Button 
