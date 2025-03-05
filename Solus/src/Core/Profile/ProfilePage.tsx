@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { useAuth } from "@/hooks/useAuth"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -6,15 +6,25 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { AlertCircle, CheckCircle } from "lucide-react"
+import { AlertCircle, CheckCircle, LogOut, Upload, X } from "lucide-react"
 import { toast } from "sonner"
+import { useNavigate } from "react-router-dom"
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage"
+import { app } from "@/lib/firebase"
 
 export default function ProfilePage() {
-  const { currentUser, updateUserData } = useAuth()
+  const { currentUser, userProfile, updateUserData, logOut } = useAuth()
+  const navigate = useNavigate()
   const [displayName, setDisplayName] = useState(currentUser?.displayName || "")
+  const [photoURL, setPhotoURL] = useState(currentUser?.photoURL || "")
+  const [username, setUsername] = useState(userProfile?.username || "")
+  const [phoneNumber, setPhoneNumber] = useState(userProfile?.phoneNumber || "")
   const [isLoading, setIsLoading] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const storage = getStorage(app)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -23,7 +33,7 @@ export default function ProfilePage() {
     setIsLoading(true)
 
     try {
-      await updateUserData({ displayName })
+      await updateUserData({ displayName, photoURL, username, phoneNumber })
       setSuccess(true)
       toast.success("Profile updated successfully")
     } catch (error) {
@@ -32,6 +42,60 @@ export default function ProfilePage() {
     } finally {
       setIsLoading(false)
     }
+  }
+
+  const handleSignOut = async () => {
+    try {
+      await logOut()
+      toast.success("Signed out successfully")
+      navigate('/')
+    } catch (error) {
+      console.error("Error signing out:", error)
+      toast.error("Failed to sign out")
+    }
+  }
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setIsUploading(true)
+    const toastId = toast.loading("Uploading image...")
+
+    try {
+      if (!currentUser?.uid) {
+        throw new Error("User not authenticated")
+      }
+
+      const storageRef = ref(storage, `users/${currentUser.uid}/profile/${Date.now()}-${file.name}`)
+      
+      await uploadBytes(storageRef, file)
+      
+      const downloadURL = await getDownloadURL(storageRef)
+      
+      setPhotoURL(downloadURL)
+      toast.success("Image uploaded successfully", { id: toastId })
+      
+      await updateUserData({ photoURL: downloadURL })
+    } catch (error: any) {
+      console.error("Error uploading image:", error)
+      
+      if (error.code === 'storage/unauthorized') {
+        toast.error("Storage permission denied. Please check Firebase Storage rules.", { id: toastId })
+      } else {
+        toast.error(`Failed to upload image: ${error.message || "Unknown error"}`, { id: toastId })
+      }
+    } finally {
+      setIsUploading(false)
+    }
+  }
+
+  const triggerFileInput = () => {
+    fileInputRef.current?.click()
+  }
+
+  const clearPhotoURL = () => {
+    setPhotoURL("")
   }
 
   return (
@@ -43,10 +107,38 @@ export default function ProfilePage() {
           <Card>
             <CardHeader>
               <div className="flex items-center gap-4">
-                <Avatar className="h-16 w-16">
-                  <AvatarImage src={currentUser?.photoURL || undefined} alt={currentUser?.displayName || "User"} />
-                  <AvatarFallback>{currentUser?.displayName?.charAt(0) || currentUser?.email?.charAt(0) || "U"}</AvatarFallback>
-                </Avatar>
+                <div className="relative group">
+                  <Avatar className="h-20 w-20 border-2 border-primary/20">
+                    <AvatarImage 
+                      src={photoURL || undefined} 
+                      alt={currentUser?.displayName || "User"} 
+                      className="object-cover"
+                    />
+                    <AvatarFallback className="text-xl">
+                      {currentUser?.displayName?.charAt(0) || currentUser?.email?.charAt(0) || "U"}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div 
+                    className={`absolute inset-0 bg-black/30 rounded-full
+                      flex items-center justify-center gap-2 transition-opacity cursor-pointer
+                      ${isUploading ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
+                    onClick={!isUploading ? triggerFileInput : undefined}
+                  >
+                    {isUploading ? (
+                      <div className="h-5 w-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <Upload className="h-5 w-5 text-white" />
+                    )}
+                  </div>
+                  <input 
+                    type="file" 
+                    ref={fileInputRef} 
+                    className="hidden" 
+                    accept="image/*" 
+                    onChange={handleFileChange}
+                    disabled={isUploading}
+                  />
+                </div>
                 <div>
                   <CardTitle>{currentUser?.displayName || "User"}</CardTitle>
                   <CardDescription>{currentUser?.email}</CardDescription>
@@ -80,6 +172,54 @@ export default function ProfilePage() {
                 </div>
                 
                 <div className="space-y-2">
+                  <Label htmlFor="photoURL">Profile Picture URL</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      id="photoURL"
+                      value={photoURL}
+                      onChange={(e) => setPhotoURL(e.target.value)}
+                      placeholder="https://example.com/your-image.gif"
+                    />
+                    {photoURL && (
+                      <Button 
+                        type="button" 
+                        variant="outline" 
+                        size="icon" 
+                        onClick={clearPhotoURL}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Enter a URL or click on your profile picture to upload.
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="username">Username</Label>
+                  <Input
+                    id="username"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    placeholder="username"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    This will be used for your profile URL
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="phoneNumber">Phone Number</Label>
+                  <Input
+                    id="phoneNumber"
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
+                    placeholder="+1 (555) 555-5555"
+                  />
+                </div>
+                
+                <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
                   <Input
                     id="email"
@@ -90,7 +230,11 @@ export default function ProfilePage() {
                 </div>
               </form>
             </CardContent>
-            <CardFooter className="flex justify-end">
+            <CardFooter className="flex justify-between">
+              <Button variant="outline" onClick={handleSignOut} className="flex items-center gap-2">
+                <LogOut className="h-4 w-4" />
+                Sign Out
+              </Button>
               <Button type="submit" onClick={handleSubmit} disabled={isLoading}>
                 {isLoading ? "Saving..." : "Save Changes"}
               </Button>
