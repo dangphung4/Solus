@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import { toast } from "sonner";
@@ -11,9 +11,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BadgePlus, XCircle, Trash2, ArrowRight, ArrowLeft, Plus, Check } from "lucide-react";
+import { BadgePlus, XCircle, Trash2, ArrowRight, ArrowLeft, Plus } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { extractDecisionOptions, generateRecommendation } from "@/lib/ai/quickDecisionService";
+import { generateRecommendation } from "@/lib/ai/quickDecisionService";
 import { createQuickDecision } from "@/db/Decision/Quick/quickDecisionDb";
 import { DecisionCategory, DecisionStatus } from "@/db/types/BaseDecision";
 import ProcessText from "./Components/ProcessText";
@@ -49,8 +49,16 @@ export default function QuickDecisionsPage() {
     reasoning: string;
     fullAnalysis: string;
   } | null>(null);
-  const [selectedOption, setSelectedOption] = useState<string | null>(null);
+  
+  // We're commenting out selectedOption as it's not being used in the component
+  // const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("manual");
+  const [activeOptionTab, setActiveOptionTab] = useState<string>("");
+  
+  // Store input values per option ID
+  const [proInputs, setProInputs] = useState<Record<string, string>>({});
+  const [conInputs, setConInputs] = useState<Record<string, string>>({});
+  
   const tabsRef = useRef<HTMLDivElement>(null);
   
   // Reset form for a new decision
@@ -58,25 +66,50 @@ export default function QuickDecisionsPage() {
     setStep(1);
     setTitle("");
     setCategory(DecisionCategory.OTHER);
-    setOptions([
+    const newOptions = [
       { id: uuidv4(), text: "", selected: false, pros: [], cons: [] },
       { id: uuidv4(), text: "", selected: false, pros: [], cons: [] }
-    ]);
+    ];
+    setOptions(newOptions);
+    setActiveOptionTab(newOptions[0].id); // Set default active option tab
     setContextFactors([]);
     setGutFeeling("");
     setAiResponse(null);
-    setSelectedOption(null);
+    // setSelectedOption(null); // Removed as selectedOption state is not used
     setActiveTab("manual");
+    
+    // Clear pro/con inputs
+    setProInputs({});
+    setConInputs({});
   };
 
+  // Initialize activeOptionTab when component mounts
+  useEffect(() => {
+    if (options.length > 0 && !activeOptionTab) {
+      setActiveOptionTab(options[0].id);
+    }
+  }, [options, activeOptionTab]);
+  
+  // Remove the effect that clears inputs on tab change
+
   const handleAddOption = () => {
-    setOptions([...options, { 
+    const newOption = { 
       id: uuidv4(), 
       text: "", 
       selected: false,
       pros: [],
       cons: []
-    }]);
+    };
+    setOptions([...options, newOption]);
+    
+    // Initialize input fields for the new option
+    setProInputs({ ...proInputs, [newOption.id]: "" });
+    setConInputs({ ...conInputs, [newOption.id]: "" });
+    
+    // Only switch to the new option tab if there was no active tab before
+    if (!activeOptionTab) {
+      setActiveOptionTab(newOption.id);
+    }
   };
 
   const handleRemoveOption = (id: string) => {
@@ -86,7 +119,15 @@ export default function QuickDecisionsPage() {
       });
       return;
     }
-    setOptions(options.filter(option => option.id !== id));
+    
+    // Get remaining options after removal
+    const remainingOptions = options.filter(option => option.id !== id);
+    setOptions(remainingOptions);
+    
+    // If we're removing the active tab, switch to the first available option
+    if (activeOptionTab === id) {
+      setActiveOptionTab(remainingOptions[0].id);
+    }
   };
 
   const handleOptionChange = (id: string, value: string) => {
@@ -99,7 +140,7 @@ export default function QuickDecisionsPage() {
     setOptions(options.map(option => 
       ({ ...option, selected: option.id === id })
     ));
-    setSelectedOption(id);
+    // setSelectedOption(id); // Removed as selectedOption state is not used
   };
 
   const handleAddContextFactor = () => {
@@ -122,6 +163,9 @@ export default function QuickDecisionsPage() {
       }
       return option;
     }));
+    
+    // Clear the input after adding
+    setProInputs({ ...proInputs, [optionId]: "" });
   };
 
   const handleAddCon = (optionId: string, con: string) => {
@@ -133,6 +177,9 @@ export default function QuickDecisionsPage() {
       }
       return option;
     }));
+    
+    // Clear the input after adding
+    setConInputs({ ...conInputs, [optionId]: "" });
   };
 
   const handleRemovePro = (optionId: string, index: number) => {
@@ -229,11 +276,14 @@ export default function QuickDecisionsPage() {
     );
     
     if (recommendedOption) {
-      setSelectedOption(recommendedOption.id);
+      // setSelectedOption(recommendedOption.id); // Removed as selectedOption state is not used
       // Update the options to mark the recommended one as selected
       setOptions(formattedOptions.map((opt: any) => 
         ({ ...opt, selected: opt.id === recommendedOption.id })
       ));
+      
+      // Set the active option tab to the recommended option
+      setActiveOptionTab(recommendedOption.id);
     }
     
     // Switch to results view
@@ -560,9 +610,13 @@ export default function QuickDecisionsPage() {
                     
                     <div className="space-y-2">
                       <Label className="text-sm font-medium">Pros & Cons (Optional)</Label>
-                      <Tabs defaultValue={options[0]?.id} className="w-full">
+                      <Tabs 
+                        value={activeOptionTab} 
+                        onValueChange={setActiveOptionTab} 
+                        className="w-full"
+                      >
                         <TabsList className="w-full grid mb-2" style={{ gridTemplateColumns: `repeat(${options.length}, 1fr)` }}>
-                          {options.map((option, index) => (
+                          {options.map((option) => (
                             <TabsTrigger key={option.id} value={option.id} className="text-xs md:text-sm px-1 py-1.5">
                               {option.text.substring(0, 12)}{option.text.length > 12 ? "..." : ""}
                             </TabsTrigger>
@@ -576,13 +630,14 @@ export default function QuickDecisionsPage() {
                                 <Label className="text-green-600 text-sm font-medium">Pros</Label>
                                 <div className="flex-1">
                                   <Input
+                                    value={proInputs[option.id] || ""}
+                                    onChange={(e) => setProInputs({ ...proInputs, [option.id]: e.target.value })}
                                     placeholder="Add a pro"
                                     className="border-green-300"
                                     onKeyDown={(e) => {
-                                      if (e.key === 'Enter' && e.currentTarget.value.trim()) {
+                                      if (e.key === 'Enter' && (proInputs[option.id] || "").trim()) {
                                         e.preventDefault();
-                                        handleAddPro(option.id, e.currentTarget.value);
-                                        e.currentTarget.value = '';
+                                        handleAddPro(option.id, proInputs[option.id] || "");
                                       }
                                     }}
                                   />
@@ -615,13 +670,14 @@ export default function QuickDecisionsPage() {
                                 <Label className="text-red-600 text-sm font-medium">Cons</Label>
                                 <div className="flex-1">
                                   <Input
+                                    value={conInputs[option.id] || ""}
+                                    onChange={(e) => setConInputs({ ...conInputs, [option.id]: e.target.value })}
                                     placeholder="Add a con"
                                     className="border-red-300"
                                     onKeyDown={(e) => {
-                                      if (e.key === 'Enter' && e.currentTarget.value.trim()) {
+                                      if (e.key === 'Enter' && (conInputs[option.id] || "").trim()) {
                                         e.preventDefault();
-                                        handleAddCon(option.id, e.currentTarget.value);
-                                        e.currentTarget.value = '';
+                                        handleAddCon(option.id, conInputs[option.id] || "");
                                       }
                                     }}
                                   />
