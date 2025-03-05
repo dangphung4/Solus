@@ -8,7 +8,9 @@ import { db } from '@/db/db';
 import { DashboardStats, DecisionInsight, ActivityLog, InsightType, ActivityActionType } from '@/db/types/Dashboard';
 import { getUserDecisions } from '@/db/Decision/decisionDb';
 import { DecisionCategory, DecisionStatus } from '@/db/types/BaseDecision';
-import { getUserReflections, getReflectionStats } from '@/db/Reflection/reflectionDb';
+import { getReflectionStats, 
+  // getUserReflections
+ } from '@/db/Reflection/reflectionDb';
 import { v4 as uuidv4 } from 'uuid';
 
 /**
@@ -62,8 +64,8 @@ export const generateDashboardStats = async (userId: string, timeRange: 'all_tim
     const decisions = filterByTimeRange(allDecisions, timeRange);
     
     // Get all reflections for the user
-    const reflections = await getUserReflections(userId);
-    const filteredReflections = filterByTimeRange(reflections, timeRange);
+    // const reflections = await getUserReflections(userId);
+    // const filteredReflections = filterByTimeRange(reflections, timeRange);
     
     // Calculate decision counts
     const decisionCounts = {

@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { toast } from "sonner";
-import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { MicIcon, SendIcon, SparklesIcon, LoaderIcon } from "lucide-react"; 
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
 import { processSpeechInput } from "@/lib/ai/quickDecisionService";
+import { ArrowRight, Wand2 } from "lucide-react";
 
 type ProcessTextProps = {
   onProcessComplete: (result: any) => void;
@@ -16,8 +15,8 @@ export default function ProcessText({ onProcessComplete }: ProcessTextProps) {
   const [isProcessing, setIsProcessing] = useState(false);
   const [examples] = useState([
     "Should I watch Netflix or go to bed? I'm not tired but have work tomorrow.",
-    "Where should I go for dinner tonight? I'm considering Italian or sushi.",
-    "Should I buy the new iPhone now or wait for next year's model?"
+    "I need to decide between going to the gym or meeting friends for dinner. I haven't seen my friends in a while, but I've been neglecting my workout routine.",
+    "Should I buy the new phone now or wait for the next model? The current one is still working but getting slow."
   ]);
 
   const handleExample = (example: string) => {
@@ -79,26 +78,26 @@ export default function ProcessText({ onProcessComplete }: ProcessTextProps) {
 
   return (
     <Card className="w-full">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <SparklesIcon className="h-5 w-5 text-primary" />
-          Process Decision Text
+      <CardHeader className="pb-3">
+        <CardTitle className="text-xl flex items-center">
+          <Wand2 className="h-5 w-5 mr-2 text-primary" />
+          Describe Your Decision
         </CardTitle>
         <CardDescription>
-          Describe your decision in natural language and let AI structure it for you
+          Explain your decision dilemma in natural language, including options and any important context
         </CardDescription>
       </CardHeader>
+      
       <CardContent className="space-y-4">
-        <Textarea
-          placeholder="Describe your decision in your own words, e.g.: I'm trying to decide between going to the gym or watching a movie tonight..."
-          className="min-h-32 transition-all"
+        <Textarea 
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
-          disabled={isProcessing}
+          placeholder="e.g., I need to decide between working from home or going to the office tomorrow. At home I'm more comfortable but get distracted, at the office I'm more focused but have a long commute."
+          className="min-h-[180px] md:min-h-[200px] resize-none"
         />
         
         <div className="space-y-2">
-          <p className="text-sm text-muted-foreground">Examples:</p>
+          <p className="text-sm text-muted-foreground">Try these examples:</p>
           <div className="flex flex-wrap gap-2">
             {examples.map((example, index) => (
               <Button 
@@ -106,48 +105,27 @@ export default function ProcessText({ onProcessComplete }: ProcessTextProps) {
                 variant="outline" 
                 size="sm" 
                 onClick={() => handleExample(example)}
-                className="text-xs"
-                disabled={isProcessing}
+                className="text-xs whitespace-normal text-left h-auto py-2 flex-grow md:flex-grow-0"
               >
-                {example.length > 30 ? example.substring(0, 30) + "..." : example}
+                {example.length > 40 ? example.substring(0, 40) + '...' : example}
               </Button>
             ))}
           </div>
         </div>
-
-        <Separator />
-        
-        <div className="text-sm text-muted-foreground">
-          <p className="font-medium">How this works:</p>
-          <ol className="list-decimal pl-5 space-y-1">
-            <li>Describe your decision dilemma in natural language</li>
-            <li>AI extracts the key options, pros, and cons</li>
-            <li>Get an instant recommendation with reasoning</li>
-          </ol>
-        </div>
       </CardContent>
-      <CardFooter className="flex justify-between">
-        <Button
-          variant="outline"
-          disabled={isProcessing}
-          onClick={() => setInputText("")}
-        >
-          Clear
-        </Button>
-        <Button
-          disabled={isProcessing || !inputText.trim()}
-          onClick={handleSubmit}
-          className="gap-2"
+      
+      <CardFooter className="pt-2">
+        <Button 
+          onClick={handleSubmit} 
+          disabled={isProcessing || !inputText.trim()} 
+          className="w-full md:w-auto ml-auto"
         >
           {isProcessing ? (
-            <>
-              <LoaderIcon className="h-4 w-4 animate-spin" />
-              Processing...
-            </>
+            <>Processing<span className="loading">...</span></>
           ) : (
             <>
-              <SendIcon className="h-4 w-4" />
               Process Decision
+              <ArrowRight className="ml-2 h-4 w-4" />
             </>
           )}
         </Button>

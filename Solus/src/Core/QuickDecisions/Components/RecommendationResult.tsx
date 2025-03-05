@@ -17,9 +17,10 @@ import {
   Save,
   Plus,
   Minus,
-  RefreshCw
+  RefreshCw,
+  ChevronDown,
+  ChevronUp
 } from "lucide-react";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { DecisionCategory } from "@/db/types/BaseDecision";
 
 type Option = {
@@ -61,43 +62,53 @@ export default function RecommendationResult({
   
   return (
     <div className="space-y-6">
-      <Card>
-        <CardHeader>
+      <Card className="overflow-hidden">
+        <CardHeader className="pb-3 md:pb-4">
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle>{title}</CardTitle>
+              <CardTitle className="text-xl md:text-2xl">{title}</CardTitle>
               <CardDescription>
-                <Badge variant="outline" className="mt-1">
+                <Badge variant="outline" className="mt-2">
                   {category.charAt(0).toUpperCase() + category.slice(1)}
                 </Badge>
               </CardDescription>
             </div>
-            <CheckCircle2 className="h-8 w-8 text-primary" />
+            <CheckCircle2 className="h-7 w-7 md:h-9 md:w-9 text-primary shrink-0" />
           </div>
         </CardHeader>
+        
         <CardContent className="space-y-6">
-          {/* Recommendation */}
-          <div className="border-2 border-primary/30 bg-primary/5 p-4 rounded-lg">
-            <h3 className="text-lg font-semibold mb-2">Recommendation</h3>
-            <p>{recommendation.recommendation}</p>
+          {/* Recommendation box */}
+          <div className="rounded-lg border-2 border-primary/30 bg-primary/5 p-4">
+            <h3 className="text-lg font-semibold mb-2 flex items-center text-primary">
+              <CheckCircle2 className="h-5 w-5 mr-2" />
+              Recommendation
+            </h3>
+            <p className="text-lg font-medium">{recommendation.recommendation}</p>
             
             <Separator className="my-4" />
             
-            <h3 className="text-lg font-semibold mb-2">Reasoning</h3>
-            <p className="text-sm">{recommendation.reasoning}</p>
+            <h3 className="text-md font-semibold mb-2">Reasoning</h3>
+            <p className="text-md text-muted-foreground">{recommendation.reasoning}</p>
             
             {recommendation.fullAnalysis && (
               <div className="mt-4">
                 <Button
-                  variant="link"
-                  className="p-0"
+                  variant="ghost"
+                  size="sm"
                   onClick={() => setShowFullAnalysis(!showFullAnalysis)}
+                  className="p-0 h-auto text-primary"
                 >
+                  {showFullAnalysis ? (
+                    <ChevronUp className="h-4 w-4 mr-1.5" />
+                  ) : (
+                    <ChevronDown className="h-4 w-4 mr-1.5" />
+                  )}
                   {showFullAnalysis ? "Hide" : "Show"} full analysis
                 </Button>
                 
                 {showFullAnalysis && (
-                  <div className="mt-2 text-sm text-muted-foreground p-2 border rounded-md">
+                  <div className="mt-3 text-sm text-muted-foreground p-3 border rounded-md bg-background">
                     <p className="whitespace-pre-line">{recommendation.fullAnalysis}</p>
                   </div>
                 )}
@@ -105,71 +116,80 @@ export default function RecommendationResult({
             )}
           </div>
           
-          {/* Context factors if available */}
+          {/* Context factors */}
           {contextFactors.length > 0 && (
             <div>
-              <h3 className="text-md font-semibold mb-2">Context Factors</h3>
-              <ScrollArea className="h-20 rounded-md border p-2">
-                <div className="space-y-1">
-                  {contextFactors.map((factor, index) => (
-                    <div key={index} className="text-sm p-1 bg-muted/50 rounded">
-                      {factor}
-                    </div>
-                  ))}
-                </div>
-              </ScrollArea>
+              <h3 className="text-md font-semibold mb-2">Considered Context Factors</h3>
+              <div className="flex flex-wrap gap-2">
+                {contextFactors.map((factor, index) => (
+                  <Badge key={index} variant="secondary" className="px-2 py-1 text-sm">
+                    {factor}
+                  </Badge>
+                ))}
+              </div>
             </div>
           )}
           
           {/* Options */}
           <div>
-            <h3 className="text-md font-semibold mb-2">Options</h3>
+            <h3 className="text-md font-semibold mb-3">All Options</h3>
             <div className="space-y-3">
-              {options.map((option) => (
-                <div 
-                  key={option.id}
-                  className={`p-3 rounded-lg border-2 cursor-pointer ${
-                    option.selected 
-                      ? "border-primary bg-primary/10" 
-                      : option.text === recommendation.recommendation
-                        ? "border-primary/30 bg-primary/5"
-                        : "border-muted hover:border-primary/50"
-                  }`}
-                  onClick={() => onOptionSelect(option.id)}
-                >
-                  <div className="flex items-center gap-2">
-                    <div className="flex-1">
-                      <p className="font-medium">{option.text}</p>
-                      {option.text === recommendation.recommendation && (
-                        <p className="text-xs text-primary mt-1">AI Recommended</p>
-                      )}
+              {options.map((option) => {
+                const isRecommended = option.text.toLowerCase() === recommendation.recommendation.toLowerCase();
+                
+                return (
+                  <div 
+                    key={option.id}
+                    className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                      option.selected 
+                        ? "border-primary bg-primary/10" 
+                        : isRecommended
+                          ? "border-primary/40 bg-primary/5"
+                          : "border-muted hover:border-primary/30"
+                    }`}
+                    onClick={() => onOptionSelect(option.id)}
+                  >
+                    <div className="flex flex-col gap-2">
+                      <div className="flex items-center justify-between">
+                        <h4 className="font-medium">{option.text}</h4>
+                        {isRecommended && (
+                          <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30">
+                            AI Recommended
+                          </Badge>
+                        )}
+                        {option.selected && !isRecommended && (
+                          <Badge variant="outline" className="bg-secondary text-secondary-foreground">
+                            Selected
+                          </Badge>
+                        )}
+                      </div>
                       
                       {/* Pros and Cons */}
                       {(option.pros.length > 0 || option.cons.length > 0) && (
-                        <div className="grid grid-cols-2 gap-2 mt-2">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-1">
                           {option.pros.length > 0 && (
-                            <div>
-                              <p className="text-xs font-semibold text-green-600 flex items-center">
+                            <div className="bg-green-50 dark:bg-green-900/20 p-2 rounded-md">
+                              <p className="text-xs font-semibold text-green-600 dark:text-green-400 flex items-center mb-1.5">
                                 <Plus className="h-3 w-3 mr-1" />
                                 Pros
                               </p>
-                              <ul className="text-xs mt-1 list-disc list-inside text-green-600">
+                              <ul className="text-xs space-y-1 list-disc list-inside text-green-700 dark:text-green-300">
                                 {option.pros.map((pro, index) => (
-                                  <li key={index} className="text-green-600/80">{pro}</li>
+                                  <li key={index} className="ml-1">{pro}</li>
                                 ))}
                               </ul>
                             </div>
                           )}
                           
                           {option.cons.length > 0 && (
-                            <div>
-                              <p className="text-xs font-semibold text-red-600 flex items-center">
+                            <div className="bg-red-50 dark:bg-red-900/20 p-2 rounded-md">
+                              <p className="text-xs font-semibold text-red-600 dark:text-red-400 flex items-center mb-1.5">
                                 <Minus className="h-3 w-3 mr-1" />
                                 Cons
                               </p>
-                              <ul className="text-xs mt-1 list-disc list-inside text-red-600">
+                              <ul className="text-xs space-y-1 list-disc list-inside text-red-700 dark:text-red-300">
                                 {option.cons.map((con, index) => (
-                                  <li key={index} className="text-red-600/80">{con}</li>
+                                  <li key={index} className="ml-1">{con}</li>
                                 ))}
                               </ul>
                             </div>
@@ -178,33 +198,50 @@ export default function RecommendationResult({
                       )}
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </CardContent>
-        <CardFooter className="flex justify-between">
-          <div className="flex items-center gap-2">
+        
+        <CardFooter className="flex flex-wrap gap-3 justify-between py-4 md:py-5">
+          <div className="flex flex-wrap gap-2">
             {onNew && (
               <Button variant="outline" onClick={onNew} disabled={isProcessing}>
-                <RefreshCw className="mr-2 h-4 w-4" />
+                <RefreshCw className="h-4 w-4 mr-2" />
                 New Decision
               </Button>
             )}
           </div>
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm">
-              <ThumbsUp className="h-4 w-4 mr-1" />
-              Helpful
-            </Button>
-            <Button variant="outline" size="sm">
-              <ThumbsDown className="h-4 w-4 mr-1" />
-              Not Helpful
-            </Button>
-            <Button onClick={onSave} disabled={isProcessing}>
+          
+          <div className="flex flex-wrap gap-2 md:gap-3">
+            <div className="flex gap-1">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="rounded-r-none border-r-0 px-2.5"
+                onClick={() => {}}
+              >
+                <ThumbsUp className="h-4 w-4" />
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="rounded-l-none px-2.5"
+                onClick={() => {}}
+              >
+                <ThumbsDown className="h-4 w-4" />
+              </Button>
+            </div>
+            
+            <Button 
+              onClick={onSave} 
+              disabled={isProcessing || !options.some(opt => opt.selected)}
+              className="whitespace-nowrap"
+            >
               {isProcessing ? "Saving..." : (
                 <>
-                  <Save className="mr-2 h-4 w-4" />
+                  <Save className="h-4 w-4 mr-2" />
                   Save Decision
                 </>
               )}

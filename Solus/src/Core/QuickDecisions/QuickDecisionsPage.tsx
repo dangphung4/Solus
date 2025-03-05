@@ -386,294 +386,311 @@ export default function QuickDecisionsPage() {
   };
 
   return (
-    <div className="container max-w-3xl py-4 min-h-[calc(100vh-4rem)]">
-      <div className="flex flex-col gap-4">
-        {/* Quick Decision Header */}
-        <div className="flex flex-col gap-2">
-          <h1 className="text-2xl font-bold">Quick Decision</h1>
-          <p className="text-muted-foreground">
-            Make everyday decisions faster with AI assistance
-          </p>
-        </div>
-        
-        {/* Mode Selection */}
-        <Tabs 
-          value={activeTab} 
-          onValueChange={setActiveTab} 
-          className="w-full"
-          ref={tabsRef}
-        >
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="manual">Manual Entry</TabsTrigger>
-            <TabsTrigger value="process">Process Text</TabsTrigger>
-            <TabsTrigger value="results" disabled={!aiResponse}>Results</TabsTrigger>
-          </TabsList>
+    <div className="flex justify-center w-full">
+      <div className="w-full max-w-4xl px-4 py-6 md:px-6 md:py-8">
+        <div className="flex flex-col gap-6">
+          {/* Quick Decision Header */}
+          <div className="text-center mb-2">
+            <h1 className="text-2xl md:text-3xl font-bold mb-2">Quick Decision</h1>
+            <p className="text-muted-foreground max-w-xl mx-auto">
+              Make everyday decisions faster with AI assistance
+            </p>
+          </div>
           
-          <TabsContent value="manual" className="mt-2">
-            {/* Step 1: Decision Information */}
-            {step === 1 && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Step 1: What's your decision about?</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <Label htmlFor="title">Decision Title</Label>
-                    <Input 
-                      id="title" 
-                      value={title} 
-                      onChange={(e) => setTitle(e.target.value)} 
-                      placeholder="e.g., Where to go for dinner tonight?"
-                    />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="category">Category</Label>
-                    <Select value={category} onValueChange={(value) => setCategory(value as DecisionCategory)}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a category" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {Object.values(DecisionCategory).map((cat) => (
-                          <SelectItem key={cat} value={cat}>
-                            {cat.charAt(0).toUpperCase() + cat.slice(1)}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  
-                  <Separator className="my-2" />
-                  
-                  <div className="space-y-2">
-                    <Label>Options</Label>
-                    <div className="space-y-2">
-                      {options.map((option, index) => (
-                        <div key={option.id} className="flex items-center gap-2">
-                          <Input 
-                            value={option.text} 
-                            onChange={(e) => handleOptionChange(option.id, e.target.value)} 
-                            placeholder={`Option ${index + 1}`}
-                          />
-                          <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            onClick={() => handleRemoveOption(option.id)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      ))}
-                    </div>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      onClick={handleAddOption}
-                      className="w-full mt-2"
-                    >
-                      <BadgePlus className="h-4 w-4 mr-2" />
-                      Add Option
-                    </Button>
-                  </div>
-                </CardContent>
-                <CardFooter className="flex justify-end">
-                  <Button onClick={handleNext}>
-                    Next
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </CardFooter>
-              </Card>
-            )}
+          {/* Mode Selection */}
+          <Tabs 
+            value={activeTab} 
+            onValueChange={setActiveTab} 
+            className="w-full"
+            ref={tabsRef}
+          >
+            <TabsList className="w-full grid grid-cols-3 mb-4">
+              <TabsTrigger value="manual" className="px-2 py-2 md:px-4">Manual Entry</TabsTrigger>
+              <TabsTrigger value="process" className="px-2 py-2 md:px-4">Process Text</TabsTrigger>
+              <TabsTrigger value="results" disabled={!aiResponse} className="px-2 py-2 md:px-4">Results</TabsTrigger>
+            </TabsList>
             
-            {/* Step 2: Additional Information */}
-            {step === 2 && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Step 2: Additional Context</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <Label htmlFor="gutFeeling">Gut Feeling (Optional)</Label>
-                    <Textarea
-                      id="gutFeeling"
-                      value={gutFeeling}
-                      onChange={(e) => setGutFeeling(e.target.value)}
-                      placeholder="What's your intuition telling you about this decision?"
-                      className="h-20"
-                    />
-                  </div>
-                  
-                  <Separator className="my-2" />
-                  
-                  <div className="space-y-2">
-                    <Label>Context Factors (Optional)</Label>
-                    <div className="flex items-center gap-2">
-                      <Input
-                        value={newContextFactor}
-                        onChange={(e) => setNewContextFactor(e.target.value)}
-                        placeholder="e.g., Time constraints, weather, budget"
+            <TabsContent value="manual" className="mt-2 focus:outline-none">
+              {/* Step 1: Decision Information */}
+              {step === 1 && (
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-xl">Step 1: What's your decision about?</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <Label htmlFor="title" className="text-sm font-medium">Decision Title</Label>
+                      <Input 
+                        id="title" 
+                        value={title} 
+                        onChange={(e) => setTitle(e.target.value)} 
+                        placeholder="e.g., Where to go for dinner tonight?"
+                        className="mt-1.5"
                       />
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={handleAddContextFactor}
-                      >
-                        <Plus className="h-4 w-4" />
-                      </Button>
                     </div>
                     
-                    {contextFactors.length > 0 && (
-                      <ScrollArea className="h-24 rounded-md border p-2 mt-2">
-                        <div className="space-y-2">
-                          {contextFactors.map((factor, index) => (
-                            <div key={index} className="flex items-center justify-between bg-secondary/50 rounded-lg p-2">
-                              <span className="text-sm">{factor}</span>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => handleRemoveContextFactor(index)}
-                              >
-                                <XCircle className="h-3 w-3" />
-                              </Button>
-                            </div>
+                    <div>
+                      <Label htmlFor="category" className="text-sm font-medium">Category</Label>
+                      <Select value={category} onValueChange={(value) => setCategory(value as DecisionCategory)}>
+                        <SelectTrigger className="mt-1.5">
+                          <SelectValue placeholder="Select a category" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Object.values(DecisionCategory).map((cat) => (
+                            <SelectItem key={cat} value={cat}>
+                              {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                            </SelectItem>
                           ))}
-                        </div>
-                      </ScrollArea>
-                    )}
-                  </div>
-                  
-                  <Separator className="my-2" />
-                  
-                  <div className="space-y-2">
-                    <Label>Pros & Cons (Optional)</Label>
-                    <Tabs defaultValue={options[0].id} className="w-full">
-                      <TabsList className="grid w-full" style={{ gridTemplateColumns: `repeat(${options.length}, 1fr)` }}>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    <Separator className="my-4" />
+                    
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium">Options</Label>
+                      <div className="space-y-3">
                         {options.map((option, index) => (
-                          <TabsTrigger key={option.id} value={option.id}>
-                            Option {index + 1}
-                          </TabsTrigger>
+                          <div key={option.id} className="flex items-center gap-2">
+                            <Input 
+                              value={option.text} 
+                              onChange={(e) => handleOptionChange(option.id, e.target.value)} 
+                              placeholder={`Option ${index + 1}`}
+                              className="flex-1"
+                            />
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              onClick={() => handleRemoveOption(option.id)}
+                              className="shrink-0"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
                         ))}
-                      </TabsList>
+                      </div>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={handleAddOption}
+                        className="w-full mt-2"
+                      >
+                        <BadgePlus className="h-4 w-4 mr-2" />
+                        Add Option
+                      </Button>
+                    </div>
+                  </CardContent>
+                  <CardFooter className="flex justify-end pt-2">
+                    <Button onClick={handleNext}>
+                      Next
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </CardFooter>
+                </Card>
+              )}
+              
+              {/* Step 2: Additional Information */}
+              {step === 2 && (
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-xl">Step 2: Additional Context</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <Label htmlFor="gutFeeling" className="text-sm font-medium">Gut Feeling (Optional)</Label>
+                      <Textarea
+                        id="gutFeeling"
+                        value={gutFeeling}
+                        onChange={(e) => setGutFeeling(e.target.value)}
+                        placeholder="What's your intuition telling you about this decision?"
+                        className="mt-1.5 h-20"
+                      />
+                    </div>
+                    
+                    <Separator className="my-4" />
+                    
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium">Context Factors (Optional)</Label>
+                      <div className="flex items-center gap-2">
+                        <Input
+                          value={newContextFactor}
+                          onChange={(e) => setNewContextFactor(e.target.value)}
+                          placeholder="e.g., Time constraints, weather, budget"
+                          className="flex-1"
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' && newContextFactor.trim()) {
+                              e.preventDefault();
+                              handleAddContextFactor();
+                            }
+                          }}
+                        />
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={handleAddContextFactor}
+                          className="shrink-0"
+                          disabled={!newContextFactor.trim()}
+                        >
+                          <Plus className="h-4 w-4" />
+                        </Button>
+                      </div>
                       
-                      {options.map((option) => (
-                        <TabsContent key={option.id} value={option.id} className="mt-2 space-y-4">
-                          <div>
-                            <div className="flex items-center gap-2 mb-2">
-                              <Label className="text-green-600">Pros</Label>
-                              <div className="flex-1">
-                                <Input
-                                  placeholder="Add a pro"
-                                  className="border-green-300"
-                                  onKeyDown={(e) => {
-                                    if (e.key === 'Enter') {
-                                      e.preventDefault();
-                                      handleAddPro(option.id, e.currentTarget.value);
-                                      e.currentTarget.value = '';
-                                    }
-                                  }}
-                                />
+                      {contextFactors.length > 0 && (
+                        <ScrollArea className="h-24 rounded-md border p-2 mt-2">
+                          <div className="space-y-2">
+                            {contextFactors.map((factor, index) => (
+                              <div key={index} className="flex items-center justify-between bg-secondary/50 rounded-lg p-2">
+                                <span className="text-sm truncate mr-2">{factor}</span>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => handleRemoveContextFactor(index)}
+                                  className="h-6 w-6 shrink-0"
+                                >
+                                  <XCircle className="h-3 w-3" />
+                                </Button>
                               </div>
+                            ))}
+                          </div>
+                        </ScrollArea>
+                      )}
+                    </div>
+                    
+                    <Separator className="my-4" />
+                    
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium">Pros & Cons (Optional)</Label>
+                      <Tabs defaultValue={options[0]?.id} className="w-full">
+                        <TabsList className="w-full grid mb-2" style={{ gridTemplateColumns: `repeat(${options.length}, 1fr)` }}>
+                          {options.map((option, index) => (
+                            <TabsTrigger key={option.id} value={option.id} className="text-xs md:text-sm px-1 py-1.5">
+                              {option.text.substring(0, 12)}{option.text.length > 12 ? "..." : ""}
+                            </TabsTrigger>
+                          ))}
+                        </TabsList>
+                        
+                        {options.map((option) => (
+                          <TabsContent key={option.id} value={option.id} className="mt-2 space-y-4 focus:outline-none">
+                            <div>
+                              <div className="flex items-center gap-2 mb-2">
+                                <Label className="text-green-600 text-sm font-medium">Pros</Label>
+                                <div className="flex-1">
+                                  <Input
+                                    placeholder="Add a pro"
+                                    className="border-green-300"
+                                    onKeyDown={(e) => {
+                                      if (e.key === 'Enter' && e.currentTarget.value.trim()) {
+                                        e.preventDefault();
+                                        handleAddPro(option.id, e.currentTarget.value);
+                                        e.currentTarget.value = '';
+                                      }
+                                    }}
+                                  />
+                                </div>
+                              </div>
+                              
+                              {option.pros.length > 0 && (
+                                <ScrollArea className="h-24 rounded-md border border-green-200 p-2">
+                                  <div className="space-y-2">
+                                    {option.pros.map((pro, index) => (
+                                      <div key={index} className="flex items-center justify-between bg-green-50 dark:bg-green-900/20 rounded-lg p-2">
+                                        <span className="text-sm truncate mr-2">{pro}</span>
+                                        <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          onClick={() => handleRemovePro(option.id, index)}
+                                          className="h-6 w-6 shrink-0"
+                                        >
+                                          <XCircle className="h-3 w-3" />
+                                        </Button>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </ScrollArea>
+                              )}
                             </div>
                             
-                            {option.pros.length > 0 && (
-                              <ScrollArea className="h-24 rounded-md border border-green-200 p-2">
-                                <div className="space-y-2">
-                                  {option.pros.map((pro, index) => (
-                                    <div key={index} className="flex items-center justify-between bg-green-50 dark:bg-green-900/20 rounded-lg p-2">
-                                      <span className="text-sm">{pro}</span>
-                                      <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        onClick={() => handleRemovePro(option.id, index)}
-                                      >
-                                        <XCircle className="h-3 w-3" />
-                                      </Button>
-                                    </div>
-                                  ))}
+                            <div>
+                              <div className="flex items-center gap-2 mb-2">
+                                <Label className="text-red-600 text-sm font-medium">Cons</Label>
+                                <div className="flex-1">
+                                  <Input
+                                    placeholder="Add a con"
+                                    className="border-red-300"
+                                    onKeyDown={(e) => {
+                                      if (e.key === 'Enter' && e.currentTarget.value.trim()) {
+                                        e.preventDefault();
+                                        handleAddCon(option.id, e.currentTarget.value);
+                                        e.currentTarget.value = '';
+                                      }
+                                    }}
+                                  />
                                 </div>
-                              </ScrollArea>
-                            )}
-                          </div>
-                          
-                          <div>
-                            <div className="flex items-center gap-2 mb-2">
-                              <Label className="text-red-600">Cons</Label>
-                              <div className="flex-1">
-                                <Input
-                                  placeholder="Add a con"
-                                  className="border-red-300"
-                                  onKeyDown={(e) => {
-                                    if (e.key === 'Enter') {
-                                      e.preventDefault();
-                                      handleAddCon(option.id, e.currentTarget.value);
-                                      e.currentTarget.value = '';
-                                    }
-                                  }}
-                                />
                               </div>
+                              
+                              {option.cons.length > 0 && (
+                                <ScrollArea className="h-24 rounded-md border border-red-200 p-2">
+                                  <div className="space-y-2">
+                                    {option.cons.map((con, index) => (
+                                      <div key={index} className="flex items-center justify-between bg-red-50 dark:bg-red-900/20 rounded-lg p-2">
+                                        <span className="text-sm truncate mr-2">{con}</span>
+                                        <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          onClick={() => handleRemoveCon(option.id, index)}
+                                          className="h-6 w-6 shrink-0"
+                                        >
+                                          <XCircle className="h-3 w-3" />
+                                        </Button>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </ScrollArea>
+                              )}
                             </div>
-                            
-                            {option.cons.length > 0 && (
-                              <ScrollArea className="h-24 rounded-md border border-red-200 p-2">
-                                <div className="space-y-2">
-                                  {option.cons.map((con, index) => (
-                                    <div key={index} className="flex items-center justify-between bg-red-50 dark:bg-red-900/20 rounded-lg p-2">
-                                      <span className="text-sm">{con}</span>
-                                      <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        onClick={() => handleRemoveCon(option.id, index)}
-                                      >
-                                        <XCircle className="h-3 w-3" />
-                                      </Button>
-                                    </div>
-                                  ))}
-                                </div>
-                              </ScrollArea>
-                            )}
-                          </div>
-                        </TabsContent>
-                      ))}
-                    </Tabs>
-                  </div>
-                </CardContent>
-                <CardFooter className="flex justify-between">
-                  <Button variant="outline" onClick={handleBack}>
-                    <ArrowLeft className="mr-2 h-4 w-4" />
-                    Back
-                  </Button>
-                  <Button 
-                    onClick={handleGetRecommendation} 
-                    disabled={isProcessing}
-                  >
-                    {isProcessing ? "Getting Recommendation..." : "Get Recommendation"}
-                    {!isProcessing && <ArrowRight className="ml-2 h-4 w-4" />}
-                  </Button>
-                </CardFooter>
-              </Card>
-            )}
-          </TabsContent>
-          
-          <TabsContent value="process" className="mt-2">
-            <ProcessText onProcessComplete={handleProcessComplete} />
-          </TabsContent>
-          
-          <TabsContent value="results" className="mt-2">
-            {aiResponse && (
-              <RecommendationResult 
-                title={title}
-                category={category}
-                options={options}
-                recommendation={aiResponse}
-                onOptionSelect={handleOptionSelect}
-                onSave={handleSaveDecision}
-                onNew={resetForm}
-                contextFactors={contextFactors}
-                isProcessing={isProcessing}
-              />
-            )}
-          </TabsContent>
-        </Tabs>
+                          </TabsContent>
+                        ))}
+                      </Tabs>
+                    </div>
+                  </CardContent>
+                  <CardFooter className="flex flex-wrap gap-2 justify-between pt-2">
+                    <Button variant="outline" onClick={handleBack}>
+                      <ArrowLeft className="mr-2 h-4 w-4" />
+                      Back
+                    </Button>
+                    <Button 
+                      onClick={handleGetRecommendation} 
+                      disabled={isProcessing}
+                    >
+                      {isProcessing ? "Getting Recommendation..." : "Get Recommendation"}
+                      {!isProcessing && <ArrowRight className="ml-2 h-4 w-4" />}
+                    </Button>
+                  </CardFooter>
+                </Card>
+              )}
+            </TabsContent>
+            
+            <TabsContent value="process" className="mt-2 focus:outline-none">
+              <ProcessText onProcessComplete={handleProcessComplete} />
+            </TabsContent>
+            
+            <TabsContent value="results" className="mt-2 focus:outline-none">
+              {aiResponse && (
+                <RecommendationResult 
+                  title={title}
+                  category={category}
+                  options={options}
+                  recommendation={aiResponse}
+                  onOptionSelect={handleOptionSelect}
+                  onSave={handleSaveDecision}
+                  onNew={resetForm}
+                  contextFactors={contextFactors}
+                  isProcessing={isProcessing}
+                />
+              )}
+            </TabsContent>
+          </Tabs>
+        </div>
       </div>
     </div>
   );
