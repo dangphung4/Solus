@@ -5,7 +5,7 @@
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
     <meta name="theme-color" content="#3B82F6" />
     <meta name="description" content="Solus - AI-powered decision making assistant that helps you make better choices with confidence" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -44,6 +44,22 @@
     <link rel="canonical" href="https://soluscore.com" />
     <title>Solus</title>
   </head>
+  <style>
+    body {
+      height: 100%;
+      overscroll-behavior: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    #root {
+      height: 100%;
+    }
+    @supports(padding: max(0px)) {
+      body {
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
+      }
+    }
+  </style>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>

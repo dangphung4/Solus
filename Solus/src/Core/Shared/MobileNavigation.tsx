@@ -152,7 +152,11 @@ export function MobileNavigation() {
                 <div className="transform transition-transform duration-200 group-hover:scale-110">
                   <Avatar className="h-6 w-6 ring-2 ring-background">
                     {currentUser?.photoURL ? (
-                      <AvatarImage src={currentUser.photoURL} alt={getDisplayName()} />
+                      <AvatarImage 
+                        src={currentUser.photoURL} 
+                        alt={getDisplayName()} 
+                        className="object-cover"
+                      />
                     ) : (
                       <AvatarFallback className="text-xs bg-primary/10 text-primary">
                         {getAvatarInitial()}
