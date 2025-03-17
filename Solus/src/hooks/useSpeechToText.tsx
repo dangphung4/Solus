@@ -6,7 +6,7 @@ interface useSpeechToTextReturn {
 
 export function useSpeechToText(): useSpeechToTextReturn {
   const [transcript, setTranscript] = React.useState("");
-  const [transcriptionError, setError] = React.useState<string | null>(null);
+  const [, setError] = React.useState<string | null>(null);
   const recognitionRef = React.useRef<SpeechRecognition | null>(null);
   const isListeningRef = React.useRef(false);
   const onCompleteCallbackRef = React.useRef<((finalTranscript: string) => void) | undefined>(undefined);
