@@ -21,7 +21,7 @@ import DeepReflectionsPage from '@/Core/DeepReflections/DeepReflectionsPage'
 import PWABadge from '@/PWABadge'
 import { useEffect } from 'react'
 import { RootLayout } from '@/RootLayout'
-
+import ReflectionsPage from '@/Core/Reflections/ReflectionsPage'
 function App() {
 
   const ScrollToTop = () => {
@@ -55,7 +55,8 @@ function App() {
               <Route path="/dashboard" element={<DashboardPage />} />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/quick-decisions" element={<QuickDecisionsPage />} />
-              <Route path="/deep-reflections" element={<DeepReflectionsPage />} />  
+              <Route path="/deep-reflections" element={<DeepReflectionsPage />} />
+              <Route path="/reflections" element={<ReflectionsPage />} />
             </Route>
             
             {/* Fallback route */}
