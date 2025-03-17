@@ -37,7 +37,8 @@ This repository is organized as follows:
 
 - **Frontend**: React 19 with Vite, Tailwind CSS, shadcn/ui component library
 - **Backend**: Firebase (Authentication, Firestore, Functions)
-- **AI**: Vercel AI SDK for natural language understanding and insights
+- **AI**: Gemini AI for natural language understanding, context processing, and insights
+- **Voice**: Speech-to-text integration for hands-free decision input
 - **Deployment**: PWA for cross-platform compatibility
 - **CI/CD**: GitHub Actions for testing, code quality, and deployment
 
@@ -47,9 +48,12 @@ This repository is organized as follows:
 
 For everyday choices (food, entertainment, simple scheduling)
 
-- 30-second decision flow
+- Voice-powered 30-second decision flow
+- Speech-to-text functionality for effortless input
+- Automatic categorization of options from natural speech
+- Gemini AI processes verbal context to extract decision elements
+- No manual typing needed - just explain your choice verbally
 - Context-aware recommendations
-- Simple gut reaction capture
 - Pattern learning from past choices
 - Immediate, personalized suggestions
 
@@ -57,15 +61,40 @@ For everyday choices (food, entertainment, simple scheduling)
 
 For complex or impactful decisions (career, relationships, major purchases)
 
-- Multi-step guided framework
-- Values alignment assessment
-- Pros/cons with weighted importance
+- Voice-driven multi-step guided framework
+- Speak freely about your decision while AI extracts key information
+- Gemini AI organizes your thoughts into structured categories
+- Values alignment assessment through conversation
+- Automatic pros/cons extraction with weighted importance
 - Future scenario visualization
 - Cognitive bias identification
 - Balanced perspective generation
+- In-depth analysis without manual data entry
+
+### Decision Journal & Follow-ups
+
+High priority for MVP:
+
+- Automatic saving of past decisions with outcomes
+- Personal database of decision history for reference
+- Periodic prompts to reflect on if decisions were good ones
+- Personal insights dashboard showing decision patterns
+- Learning from past choices to improve future recommendations
+- Integration with existing database structure
+
+### Quick Templates Library
+
+Planned for post-MVP:
+
+- Pre-built decision templates for common scenarios (restaurant choice, purchase comparison)
+- User ability to save custom templates for recurring decisions
+- "One-tap" decision flows for frequently made choices
+- Faster execution for similar decision types
 
 ### Smart Features
 
+- Speech-to-text conversion for frictionless decision input
+- Gemini LLM for natural language understanding and processing
 - Automatic decision type detection
 - Contextual prompting based on decision category
 - Personal pattern recognition
@@ -140,17 +169,32 @@ This project uses GitHub Actions for:
 
 ## Differentiation
 
+- Voice-driven interface for frictionless decision capture
+- Reflections Journal that tracks outcomes and builds personal decision intelligence
 - Dual-mode approach for both quick and complex decisions
 - AI that understands emotional and ethical dimensions
 - Learning system that improves with usage
 - Privacy-focused design for sensitive decisions
 - Structured frameworks tailored to decision types
+- Automatic categorization of options from natural speech
 
 ## Development Phases
 
-1. **MVP**: Quick Decision mode with basic AI for common choices
-2. **V2**: Deep Reflection mode with enhanced frameworks
-3. **V3**: Advanced pattern learning and expanded decision library
+1. **MVP**: 
+   - Quick Decision mode with basic AI for common choices
+   - Decision Journal & Follow-ups with core tracking functionality
+   - Integration with voice-driven input
+
+2. **V2**: 
+   - Deep Reflection mode with enhanced frameworks
+   - Quick Templates Library for recurring decisions
+   - Expanded tracking and insights
+
+3. **V3**: 
+   - Advanced pattern learning and expanded decision library
+   - Visual Decision Maps for better visualization
+   - Mood & Context Awareness
+   - Enhanced social features
 
 ## Ethical Approach
 

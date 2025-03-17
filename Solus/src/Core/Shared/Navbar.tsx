@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { LogOut, User, Zap, Brain, LayoutDashboard } from 'lucide-react';
+import { LogOut, User, Zap, Brain, LayoutDashboard, PencilLine } from 'lucide-react';
 import { toast } from 'sonner';
 import SolusLogo from '@/assets/solus-logo.svg';
 
@@ -114,6 +114,13 @@ export function Navbar() {
                       Dashboard
                     </Button>
                   </Link>
+
+                  <Link to="/reflections">
+                    <Button variant="ghost" className="rounded-full transition-all hover:bg-primary/10">
+                      <PencilLine className="mr-2 h-4 w-4" />
+                      Journal
+                    </Button>
+                  </Link>
                 </>
               )}
             </div>
@@ -173,6 +180,12 @@ export function Navbar() {
                         <span>Dashboard</span>
                       </div>
                     </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate('/reflections')}>
+                      <div className="flex items-center">
+                        <PencilLine className="mr-2 h-4 w-4" />
+                        <span>Journal</span>
+                      </div>
+                    </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => navigate('/profile')}>
                       <div className="flex items-center">
                         <User className="mr-2 h-4 w-4" />
@@ -180,6 +193,8 @@ export function Navbar() {
                       </div>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
+                
+                    
                     <DropdownMenuItem onClick={handleSignOut}>
                       <div className="flex items-center">
                         <LogOut className="mr-2 h-4 w-4" />

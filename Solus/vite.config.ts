@@ -51,18 +51,25 @@ export default defineConfig({
       ],
       screenshots: [
         {
-          src: 'screenshot-1.png',
+          src: 'quick-decision-preview-dark.png',
           sizes: '1080x1920',
           type: 'image/png',
           form_factor: 'narrow',
           label: 'Quick Decision Mode'
         },
         {
-          src: 'screenshot-2.png',
+          src: 'deep-reflection-preview-dark.png',
           sizes: '1080x1920',
           type: 'image/png',
           form_factor: 'narrow',
           label: 'Deep Reflection Mode'
+        },
+        {
+          src: 'solus-dashboard-preview-dark.png',
+          sizes: '1080x1920',
+          type: 'image/png',
+          form_factor: 'narrow',
+          label: 'Dashboard Mode'
         }
       ],
       categories: ['productivity', 'lifestyle', 'utilities'],
