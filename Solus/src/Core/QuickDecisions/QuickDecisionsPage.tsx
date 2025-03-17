@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSpeechToText } from "@/hooks/useSpeechToText";
 import { v4 as uuidv4 } from "uuid";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -30,6 +31,7 @@ import {
   ArrowRight,
   ArrowLeft,
   Plus,
+  Mic
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { generateRecommendation } from "@/lib/ai/quickDecisionService";
@@ -78,13 +80,19 @@ export default function QuickDecisionsPage() {
   const [activeTab, setActiveTab] = useState("manual");
   const [activeOptionTab, setActiveOptionTab] = useState<string>("");
 
-  // Store input values per option ID
   const [proInputs, setProInputs] = useState<Record<string, string>>({});
   const [conInputs, setConInputs] = useState<Record<string, string>>({});
 
   const tabsRef = useRef<HTMLDivElement>(null);
 
-  // Reset form for a new decision
+  const [isDecisionRecording, setIsDecisionRecording] = useState<boolean>(false);
+  const [activeRecordingIndex, setActiveRecordingIndex] = useState<string | null>(null);
+  const [isGutFeelingRecording, setIsGutFeelingRecording] = useState<boolean>(false);
+  const [isContextFactorRecording, setIsContextFactorRecording] = useState<boolean>(false);
+  const [isOptionProRecording, setIsOptionProRecording] = useState<boolean>(false);
+  const [isOptionConRecording, setIsOptionConRecording] = useState<boolean>(false);
+  const { startListening } = useSpeechToText();
+
   const resetForm = () => {
     setStep(1);
     setTitle("");
@@ -94,7 +102,7 @@ export default function QuickDecisionsPage() {
       { id: uuidv4(), text: "", selected: false, pros: [], cons: [] },
     ];
     setOptions(newOptions);
-    setActiveOptionTab(newOptions[0].id); // Set default active option tab
+    setActiveOptionTab(newOptions[0].id);
     setContextFactors([]);
     setGutFeeling("");
     setAiResponse(null);
@@ -106,14 +114,12 @@ export default function QuickDecisionsPage() {
     setConInputs({});
   };
 
-  // Initialize activeOptionTab when component mounts
   useEffect(() => {
     if (options.length > 0 && !activeOptionTab) {
       setActiveOptionTab(options[0].id);
     }
   }, [options, activeOptionTab]);
 
-  // Remove the effect that clears inputs on tab change
 
   const handleAddOption = () => {
     const newOption = {
@@ -125,11 +131,9 @@ export default function QuickDecisionsPage() {
     };
     setOptions([...options, newOption]);
 
-    // Initialize input fields for the new option
     setProInputs({ ...proInputs, [newOption.id]: "" });
     setConInputs({ ...conInputs, [newOption.id]: "" });
 
-    // Only switch to the new option tab if there was no active tab before
     if (!activeOptionTab) {
       setActiveOptionTab(newOption.id);
     }
@@ -143,11 +147,9 @@ export default function QuickDecisionsPage() {
       return;
     }
 
-    // Get remaining options after removal
     const remainingOptions = options.filter((option) => option.id !== id);
     setOptions(remainingOptions);
 
-    // If we're removing the active tab, switch to the first available option
     if (activeOptionTab === id) {
       setActiveOptionTab(remainingOptions[0].id);
     }
@@ -191,7 +193,6 @@ export default function QuickDecisionsPage() {
       })
     );
 
-    // Clear the input after adding
     setProInputs({ ...proInputs, [optionId]: "" });
   };
 
@@ -207,7 +208,6 @@ export default function QuickDecisionsPage() {
       })
     );
 
-    // Clear the input after adding
     setConInputs({ ...conInputs, [optionId]: "" });
   };
 
@@ -240,7 +240,6 @@ export default function QuickDecisionsPage() {
   };
 
   const handleNext = () => {
-    // Validate before moving to the next step
     if (step === 1) {
       if (!title.trim()) {
         toast.error("Title required", {
@@ -257,7 +256,6 @@ export default function QuickDecisionsPage() {
         return;
       }
 
-      // Clean up empty options before proceeding
       setOptions(validOptions);
     }
 
@@ -280,11 +278,9 @@ export default function QuickDecisionsPage() {
       return;
     }
 
-    // Update state with processed data
     setTitle(result.decisionData.object.title);
     setCategory(result.decisionData.object.category);
 
-    // Format options with IDs and selected state
     const formattedOptions = result.decisionData.object.options.map(
       (opt: any) => ({
         id: uuidv4(),
@@ -297,15 +293,12 @@ export default function QuickDecisionsPage() {
 
     setOptions(formattedOptions);
 
-    // Set context factors if available
     if (result.decisionData.object.contextFactors) {
       setContextFactors(result.decisionData.object.contextFactors);
     }
 
-    // Set AI recommendation
     setAiResponse(result.recommendation);
 
-    // Find and mark the recommended option as selected
     const recommendedOption = formattedOptions.find(
       (opt: any) =>
         opt.text.toLowerCase() ===
@@ -322,11 +315,9 @@ export default function QuickDecisionsPage() {
         }))
       );
 
-      // Set the active option tab to the recommended option
       setActiveOptionTab(recommendedOption.id);
     }
 
-    // Switch to results view
     setStep(3);
     setActiveTab("results");
 
@@ -358,7 +349,6 @@ export default function QuickDecisionsPage() {
       setStep(3);
       setActiveTab("results");
 
-      // Find and mark the recommended option as selected
       const recommendedOption = options.find(
         (opt) => opt.text.toLowerCase() === result.recommendation.toLowerCase()
       );
@@ -392,7 +382,6 @@ export default function QuickDecisionsPage() {
     setIsProcessing(true);
 
     try {
-      // Filter out options with empty text
       const validOptions = options.filter((opt) => opt.text.trim() !== "");
 
       if (validOptions.length < 2) {
@@ -403,7 +392,6 @@ export default function QuickDecisionsPage() {
         return;
       }
 
-      // Check if at least one option is selected
       if (!validOptions.some((opt) => opt.selected)) {
         toast.error("Selection required", {
           description: "Please select an option before saving.",
@@ -412,7 +400,6 @@ export default function QuickDecisionsPage() {
         return;
       }
 
-      // A helper function to convert undefined values to null for Firebase
       const replaceUndefinedWithNull = (obj: any): any => {
         if (obj === undefined) return null;
         if (obj === null || typeof obj !== "object") return obj;
@@ -428,7 +415,6 @@ export default function QuickDecisionsPage() {
         return result;
       };
 
-      // Prepare decision data with proper typing
       const decisionData = {
         id: uuidv4(),
         userId: currentUser.uid,
@@ -453,19 +439,16 @@ export default function QuickDecisionsPage() {
         timeSpent: 0,
       };
 
-      // Replace any remaining undefined values with null
       const cleanDecisionData = replaceUndefinedWithNull(decisionData);
 
       console.log("Saving decision data:", cleanDecisionData);
 
-      // Save to database
       await createQuickDecision(cleanDecisionData);
 
       toast.success("Decision saved", {
         description: "Your decision has been saved successfully.",
       });
 
-      // Navigate to decision history or dashboard
       navigate("/dashboard");
     } catch (error) {
       console.error("Error saving decision:", error);
@@ -476,6 +459,66 @@ export default function QuickDecisionsPage() {
       setIsProcessing(false);
     }
   };
+
+  const handleMicButtonPress = async (stateToUpdate: string, optionId?: string) => {
+    switch (stateToUpdate){
+      case "decision":
+        setIsDecisionRecording(true);
+        await startListening(
+          () => setIsDecisionRecording(false),
+          (finalText) => {setTitle(finalText);} 
+        );
+        break;
+      case "option":
+        if (optionId !== undefined){
+          setActiveRecordingIndex(optionId);
+          await startListening(
+            () => setActiveRecordingIndex(null),
+            (finalText) => {handleOptionChange(optionId, finalText)}
+          );
+        }
+        break;
+      case "gutFeeling":
+        setIsGutFeelingRecording(true);
+        await startListening(
+          () => setIsGutFeelingRecording(false),
+          (finalText) => {setGutFeeling(finalText);}
+        );
+        break;
+      case "context":
+        setIsContextFactorRecording(true);
+        await startListening(
+          () => setIsContextFactorRecording(false),
+          (finalText) => {setNewContextFactor(finalText);}
+        );
+        break;
+      case "optionPro":
+        if (optionId !== undefined){
+          setIsOptionProRecording(true);
+          await startListening(
+            () => setIsOptionProRecording(false),
+            (finalText) => {setProInputs({
+              ...proInputs,
+              [optionId]: finalText,
+            })}
+          );
+        }
+        break;
+      case "optionCon":
+        if (optionId !== undefined){
+          setIsOptionConRecording(true);
+          await startListening(
+            () => setIsOptionConRecording(false),
+            (finalText) => {setConInputs({
+              ...conInputs,
+              [optionId]: finalText,
+            })}
+          );
+        }
+        break;
+    }
+  };
+
 
   return (
     <div className="flex justify-center w-full">
@@ -528,13 +571,22 @@ export default function QuickDecisionsPage() {
                       <Label htmlFor="title" className="text-sm font-medium">
                         Decision Title
                       </Label>
-                      <Input
-                        id="title"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        placeholder="e.g., Where to go for dinner tonight?"
-                        className="mt-1.5"
-                      />
+                      <div className="flex gap-2 items-center">
+                        <Input
+                          id="title"
+                          value={title}
+                          onChange={(e) => setTitle(e.target.value)}
+                          placeholder="e.g., Where to go for dinner tonight?"
+                          className="mt-1.5"
+                        />
+                        <Button
+                          variant={isDecisionRecording ? "destructive" : "outline"}
+                          onClick={() => {handleMicButtonPress("decision")}}
+                          className="mt-1.5"
+                        >
+                          <Mic className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
 
                     <div>
@@ -578,6 +630,12 @@ export default function QuickDecisionsPage() {
                               placeholder={`Option ${index + 1}`}
                               className="flex-1"
                             />
+                            <Button
+                              variant={activeRecordingIndex !== null && activeRecordingIndex == option.id ? "destructive" : "outline"}
+                              onClick={() => {handleMicButtonPress("option", option.id)}}
+                            >
+                              <Mic className="h-4 w-4" />
+                            </Button>
                             <Button
                               variant="ghost"
                               size="icon"
@@ -625,13 +683,21 @@ export default function QuickDecisionsPage() {
                       >
                         Gut Feeling (Optional)
                       </Label>
-                      <Textarea
-                        id="gutFeeling"
-                        value={gutFeeling}
-                        onChange={(e) => setGutFeeling(e.target.value)}
-                        placeholder="What's your intuition telling you about this decision?"
-                        className="mt-1.5 h-20"
-                      />
+                      <div className="flex gap-2 items-center">
+                        <Textarea
+                          id="gutFeeling"
+                          value={gutFeeling}
+                          onChange={(e) => setGutFeeling(e.target.value)}
+                          placeholder="What's your intuition telling you about this decision?"
+                          className="mt-1.5 h-20"
+                        />
+                        <Button
+                          variant={isGutFeelingRecording ? "destructive" : "outline"}
+                          onClick={() => {handleMicButtonPress("gutFeeling")}}
+                        >
+                          <Mic className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
 
                     <Separator className="my-4" />
@@ -653,6 +719,13 @@ export default function QuickDecisionsPage() {
                             }
                           }}
                         />
+                        <Button
+                          variant={isContextFactorRecording ? "destructive" : "outline"}
+                          onClick={() => {handleMicButtonPress("context")}}
+                          className="mt-1.5"
+                        >
+                          <Mic className="h-4 w-4" />
+                        </Button>
                         <Button
                           variant="outline"
                           size="icon"
@@ -756,6 +829,13 @@ export default function QuickDecisionsPage() {
                                       }
                                     }}
                                   />
+                                  <Button
+                                    variant={isOptionProRecording ? "destructive" : "outline"}
+                                    onClick={() => {handleMicButtonPress("optionPro", option.id)}}
+                                    className="mt-1.5"
+                                  >
+                                    <Mic className="h-4 w-4" />
+                                  </Button>
                                 </div>
                               </div>
 
@@ -816,6 +896,13 @@ export default function QuickDecisionsPage() {
                                       }
                                     }}
                                   />
+                                  <Button
+                                    variant={isOptionConRecording ? "destructive" : "outline"}
+                                    onClick={() => {handleMicButtonPress("optionCon", option.id)}}
+                                    className="mt-1.5"
+                                  >
+                                    <Mic className="h-4 w-4" />
+                                  </Button>
                                 </div>
                               </div>
 
