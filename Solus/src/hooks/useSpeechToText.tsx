@@ -13,9 +13,7 @@ export function useSpeechToText(): useSpeechToTextReturn {
 	const onSpeechEndCallbackRef = React.useRef<(() => void) | undefined>(undefined);
   const transcriptRef = React.useRef("");
 
-  // Initialize speech recognition
   React.useEffect(() => {
-    // Check if browser supports the Web Speech API
     if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
       setError("Your browser doesn't support speech recognition");
       console.log(transcriptionError);
@@ -30,7 +28,6 @@ export function useSpeechToText(): useSpeechToTextReturn {
     recognition.lang = 'en-US'; // Default to English, can be made user configurable in future
     
     recognition.onresult = (event: SpeechRecognitionEvent) => {
-      // Continuously overwrite the transcript with only the most recent speech result
       const currentTranscript = event.results[event.results.length - 1][0].transcript;
       const isFinal = event.results[event.results.length - 1].isFinal;
       
@@ -58,11 +55,9 @@ export function useSpeechToText(): useSpeechToTextReturn {
     
     recognition.onend = () => {
       if (isListeningRef.current) {
-        recognition.start(); // Restart if we're supposed to be listening
+        recognition.start();
       } else {
-        // Call the callback with the final transcript
         if (onCompleteCallbackRef.current) {
-          // Use the ref to ensure we have the latest transcript
           onCompleteCallbackRef.current(transcriptRef.current.trim());
         }
 				if (onSpeechEndCallbackRef.current) {
@@ -72,9 +67,7 @@ export function useSpeechToText(): useSpeechToTextReturn {
       }
     };
     
-    // Add speechend event handler
     recognition.onspeechend = () => {
-      // Speech detected has stopped
       if (!recognition.continuous) {
         isListeningRef.current = false;
         recognition.stop();
@@ -90,7 +83,6 @@ export function useSpeechToText(): useSpeechToTextReturn {
     };
   }, []);
 
-	// Keep the ref in sync with the latest transcript state
   React.useEffect(() => {
     transcriptRef.current = transcript;
   }, [transcript]);
@@ -101,7 +93,6 @@ export function useSpeechToText(): useSpeechToTextReturn {
     setTranscript("");
     transcriptRef.current = "";
     
-		// Store callbacks to trigger after speech ends and when transcription completes
     onCompleteCallbackRef.current = onComplete;
 		onSpeechEndCallbackRef.current = onSpeechEnd;
     
