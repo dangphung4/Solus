@@ -7,14 +7,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { processSpeechInput } from "@/lib/ai/quickDecisionService";
 import { ArrowRight, Wand2, Loader2, LightbulbIcon, Mic } from "lucide-react";
 
-// Add this type definition for options
 type ProcessedOption = {
   text: string;
   pros: string[];
   cons: string[];
 };
 
-// Add type for the processed result
 type ProcessedResult = {
   decisionData: {
     object: {
@@ -44,7 +42,6 @@ export default function ProcessText({ onProcessComplete }: ProcessTextProps) {
     "Should I buy the new phone now or wait for the next model? The current one is still working but getting slow."
   ]);
 
-  // Speech to text relevant
   const [isDecisionRecording, setIsDecisionRecording] = useState<boolean>(false);
   const { startListening } = useSpeechToText();
 
@@ -66,12 +63,10 @@ export default function ProcessText({ onProcessComplete }: ProcessTextProps) {
       const result = await processSpeechInput(inputText);
       console.log("Process result:", result);
       
-      // Validate result has the expected structure
       if (!result.decisionData?.object || !result.recommendation) {
         throw new Error("Invalid response format from AI service");
       }
       
-      // Validate we have at least two options
       if (!result.decisionData.object.options || result.decisionData.object.options.length < 2) {
         toast.error("Insufficient options", {
           description: "The AI couldn't extract enough options from your input. Please provide at least two clear options."
@@ -80,21 +75,18 @@ export default function ProcessText({ onProcessComplete }: ProcessTextProps) {
         return;
       }
       
-      // Check that we have a recommended option that matches one of the options
       const recommendationText = result.recommendation.recommendation.toLowerCase();
       const hasMatchingOption = result.decisionData.object.options.some(
         (opt: ProcessedOption) => opt.text.toLowerCase() === recommendationText
       );
       
       if (!hasMatchingOption) {
-        // Instead of showing an error, find the closest matching option
         const bestMatch = findBestMatchingOption(
           recommendationText,
           result.decisionData.object.options
         );
         
         if (bestMatch) {
-          // Update the recommendation to use the exact option text
           result.recommendation.recommendation = bestMatch.text;
           console.log("Adjusted recommendation to match option:", bestMatch.text);
         } else {
@@ -117,11 +109,9 @@ export default function ProcessText({ onProcessComplete }: ProcessTextProps) {
     }
   };
 
-  // Helper function to find the best matching option for a recommendation
   const findBestMatchingOption = (recommendation: string, options: ProcessedOption[]) => {
     if (!options || options.length === 0) return null;
     
-    // Try to find option that contains the recommendation or vice versa
     for (const option of options) {
       const optionText = option.text.toLowerCase();
       if (optionText.includes(recommendation) || recommendation.includes(optionText)) {
@@ -129,7 +119,6 @@ export default function ProcessText({ onProcessComplete }: ProcessTextProps) {
       }
     }
     
-    // If no obvious match, check for word overlap
     let bestMatch = null;
     let highestOverlap = 0;
     
@@ -150,15 +139,14 @@ export default function ProcessText({ onProcessComplete }: ProcessTextProps) {
       }
     }
     
-    // Require at least some meaningful overlap
-    return highestOverlap > 1 ? bestMatch : options[0]; // Default to first option if no good match
+    return highestOverlap > 1 ? bestMatch : options[0]; 
   };
 
   const handleMicButtonPress = async () => {
     setIsDecisionRecording(true);
         await startListening(
-          () => setIsDecisionRecording(false), // onSpeechEnd callback
-          (finalText) => {setInputText(finalText);} // OnComplete callback
+          () => setIsDecisionRecording(false), 
+          (finalText) => {setInputText(finalText);} 
         );
   };
 
