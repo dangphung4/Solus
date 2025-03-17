@@ -16,7 +16,6 @@ export function useSpeechToText(): useSpeechToTextReturn {
   React.useEffect(() => {
     if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
       setError("Your browser doesn't support speech recognition");
-      console.log(transcriptionError);
       return;
     }
 
@@ -44,7 +43,6 @@ export function useSpeechToText(): useSpeechToTextReturn {
     
     recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
       setError(`Recognition error: ${event.error}`);
-      console.log(transcriptionError);
       if (onCompleteCallbackRef.current) {
         onCompleteCallbackRef.current(transcriptRef.current.trim());
       }
@@ -98,7 +96,6 @@ export function useSpeechToText(): useSpeechToTextReturn {
     
     if (!recognitionRef.current) {
       setError("Speech recognition not available");
-      console.log(transcriptionError);
       return;
     }
     
@@ -107,7 +104,6 @@ export function useSpeechToText(): useSpeechToTextReturn {
       recognitionRef.current.start();
     } catch (err: any) {
       setError(err.message || "Failed to start speech recognition");
-      console.log(transcriptionError);
       if (onComplete) {
         onComplete("");
       }
