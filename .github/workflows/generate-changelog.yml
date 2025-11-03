@@ -22,7 +22,7 @@ jobs:
           fetch-depth: 0
 
       - name: Generate Changelog
-        uses: mikepenz/release-changelog-builder-action@v5
+        uses: mikepenz/release-changelog-builder-action@v6
         with:
           configuration: ".github/changelog.json"
           outputFile: "CHANGELOG.md"
