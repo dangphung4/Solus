@@ -51,7 +51,7 @@ jobs:
       # Add this only if you have tests set up
       
     - name: Upload build artifacts
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       with:
         name: build-files
         path: Solus/dist/ 
