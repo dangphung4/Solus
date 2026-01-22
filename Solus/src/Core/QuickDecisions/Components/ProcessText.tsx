@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSpeechToText } from "@/hooks/useSpeechToText";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -31,10 +31,25 @@ type ProcessedResult = {
 
 type ProcessTextProps = {
   onProcessComplete: (result: ProcessedResult) => void;
+  initialText?: string;
+  onTextChange?: (text: string) => void;
 };
 
-export default function ProcessText({ onProcessComplete }: ProcessTextProps) {
-  const [inputText, setInputText] = useState("");
+export default function ProcessText({ onProcessComplete, initialText = "", onTextChange }: ProcessTextProps) {
+  const [inputText, setInputText] = useState(initialText);
+
+  // Update local state when initialText changes from parent
+  useEffect(() => {
+    if (initialText !== inputText) {
+      setInputText(initialText);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialText]);
+
+  const handleTextChange = (text: string) => {
+    setInputText(text);
+    onTextChange?.(text);
+  };
   const [isProcessing, setIsProcessing] = useState(false);
   const [examples] = useState([
     "Should I watch Netflix or go to bed? I'm not tired but have work tomorrow.",
@@ -61,8 +76,7 @@ export default function ProcessText({ onProcessComplete }: ProcessTextProps) {
     
     try {
       const result = await processSpeechInput(inputText);
-      console.log("Process result:", result);
-      
+
       if (!result.decisionData?.object || !result.recommendation) {
         throw new Error("Invalid response format from AI service");
       }
@@ -88,7 +102,6 @@ export default function ProcessText({ onProcessComplete }: ProcessTextProps) {
         
         if (bestMatch) {
           result.recommendation.recommendation = bestMatch.text;
-          console.log("Adjusted recommendation to match option:", bestMatch.text);
         } else {
           toast.error("Recommendation mismatch", {
             description: "The AI recommendation doesn't match any of the options. Please try rephrasing your input."
@@ -151,72 +164,83 @@ export default function ProcessText({ onProcessComplete }: ProcessTextProps) {
   };
 
   return (
-    <Card className="w-full border-primary/10 shadow-md transition-all hover:shadow-lg">
-      <CardHeader className="pb-3 bg-gradient-to-r from-primary/5 to-background">
-        <CardTitle className="text-xl flex items-center">
-          <Wand2 className="h-5 w-5 mr-2 text-primary" />
+    <Card className="w-full border-border/50 shadow-lg">
+      <CardHeader className="pb-3 space-y-1">
+        <CardTitle className="text-lg md:text-xl flex items-center gap-2">
+          <div className="p-1.5 rounded-lg bg-primary/10">
+            <Wand2 className="h-4 w-4 md:h-5 md:w-5 text-primary" />
+          </div>
           Describe Your Decision
         </CardTitle>
-        <CardDescription>
-          Explain your decision dilemma in natural language, including options and any important context
+        <CardDescription className="text-xs md:text-sm">
+          Explain your dilemma naturally - include the options you're considering
         </CardDescription>
       </CardHeader>
-      
+
       <CardContent className="space-y-4">
         <div className="relative">
-          <div className="flex gap-2 items-center">
-            <Textarea 
-              value={inputText}
-              onChange={(e) => setInputText(e.target.value)}
-              placeholder="e.g., I need to decide between working from home or going to the office tomorrow. At home I'm more comfortable but get distracted, at the office I'm more focused but have a long commute."
-              className="min-h-[180px] md:min-h-[200px] resize-none transition-all focus:border-primary focus:ring-primary"
-              disabled={isProcessing}
-            />
-            <Button
-              variant={isDecisionRecording ? "destructive" : "outline"}
-              onClick={() => {handleMicButtonPress()}}
-              className="mt-1.5"
-            >
-              <Mic className="h-4 w-4" />
-            </Button>
-          </div>
+          <Textarea
+            value={inputText}
+            onChange={(e) => handleTextChange(e.target.value)}
+            placeholder="e.g., I need to decide between working from home or going to the office tomorrow. At home I'm more comfortable but get distracted, at the office I'm more focused but have a long commute."
+            className="min-h-[140px] md:min-h-[180px] resize-none text-sm md:text-base pr-12"
+            disabled={isProcessing}
+          />
+          <Button
+            variant={isDecisionRecording ? "destructive" : "ghost"}
+            size="icon"
+            onClick={() => handleMicButtonPress()}
+            className="absolute right-2 top-2 h-9 w-9"
+            disabled={isProcessing}
+          >
+            <Mic className={`h-4 w-4 ${isDecisionRecording ? 'animate-pulse' : ''}`} />
+          </Button>
+          {isDecisionRecording && (
+            <div className="absolute bottom-2 left-2 flex items-center gap-2 text-xs text-red-500">
+              <span className="h-2 w-2 rounded-full bg-red-500 animate-pulse" />
+              Listening...
+            </div>
+          )}
           {isProcessing && (
-            <div className="absolute inset-0 flex items-center justify-center bg-background/80 rounded-md">
-              <div className="text-center">
-                <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto mb-2" />
-                <p className="text-sm font-medium">Processing your decision...</p>
+            <div className="absolute inset-0 flex items-center justify-center bg-background/90 rounded-md backdrop-blur-sm">
+              <div className="text-center px-4">
+                <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto mb-3" />
+                <p className="text-sm font-medium">Analyzing your decision...</p>
+                <p className="text-xs text-muted-foreground mt-1">Extracting options and generating recommendation</p>
               </div>
             </div>
           )}
         </div>
-        
-        <div className="space-y-2 animate-fadeIn">
-          <p className="text-sm text-muted-foreground flex items-center gap-1.5">
-            <LightbulbIcon className="h-4 w-4 text-yellow-500" />
-            Try these examples:
+
+        {/* Examples - scrollable on mobile */}
+        <div className="space-y-2">
+          <p className="text-xs text-muted-foreground flex items-center gap-1.5">
+            <LightbulbIcon className="h-3.5 w-3.5 text-amber-500" />
+            Try an example:
           </p>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex gap-2 overflow-x-auto pb-1 -mx-4 px-4 md:mx-0 md:px-0 md:flex-wrap scrollbar-hide">
             {examples.map((example, index) => (
-              <Button 
-                key={index} 
-                variant="outline" 
-                size="sm" 
+              <Button
+                key={index}
+                variant="outline"
+                size="sm"
                 onClick={() => handleExample(example)}
-                className="text-xs whitespace-normal text-left h-auto py-2 flex-grow md:flex-grow-0 transition-all hover:bg-primary/5 hover:border-primary/30"
+                className="text-xs h-auto py-2 px-3 flex-shrink-0 max-w-[250px] md:max-w-none whitespace-normal text-left"
                 disabled={isProcessing}
               >
-                {example.length > 40 ? example.substring(0, 40) + '...' : example}
+                <span className="line-clamp-2">{example.length > 50 ? example.substring(0, 50) + '...' : example}</span>
               </Button>
             ))}
           </div>
         </div>
       </CardContent>
-      
-      <CardFooter className="pt-2 bg-gradient-to-r from-background to-primary/5">
-        <Button 
-          onClick={handleSubmit} 
-          disabled={isProcessing || !inputText.trim()} 
-          className="w-full md:w-auto ml-auto transition-all hover:bg-primary/90"
+
+      <CardFooter className="pt-3 border-t">
+        <Button
+          onClick={handleSubmit}
+          disabled={isProcessing || !inputText.trim()}
+          className="w-full"
+          size="lg"
         >
           {isProcessing ? (
             <>
@@ -225,7 +249,7 @@ export default function ProcessText({ onProcessComplete }: ProcessTextProps) {
             </>
           ) : (
             <>
-              Process Decision
+              Analyze Decision
               <ArrowRight className="ml-2 h-4 w-4" />
             </>
           )}

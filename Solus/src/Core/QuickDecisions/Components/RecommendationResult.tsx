@@ -5,13 +5,11 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-  CardDescription
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
+import { Progress } from "@/components/ui/progress";
 import {
-  CheckCircle2,
   ThumbsUp,
   ThumbsDown,
   Save,
@@ -20,10 +18,18 @@ import {
   RefreshCw,
   ChevronDown,
   ChevronUp,
-  CheckCheck
+  CheckCheck,
+  Share2,
+  Copy,
+  Sparkles,
+  Zap,
+  TrendingUp,
+  Clock,
+  Info,
 } from "lucide-react";
 import { DecisionCategory } from "@/db/types/BaseDecision";
 import { toast } from "sonner";
+import { motion, AnimatePresence } from "framer-motion";
 
 type Option = {
   id: string;
@@ -61,84 +67,218 @@ export default function RecommendationResult({
   isProcessing = false,
 }: RecommendationResultProps) {
   const [showFullAnalysis, setShowFullAnalysis] = useState(false);
-  const [feedback, setFeedback] = useState<'helpful' | 'unhelpful' | null>(null);
-  
-  const handleFeedback = (type: 'helpful' | 'unhelpful') => {
+  const [feedback, setFeedback] = useState<"helpful" | "unhelpful" | null>(null);
+  const [expandedOption, setExpandedOption] = useState<string | null>(null);
+
+  // Calculate confidence score based on pros/cons balance
+  const getConfidenceScore = () => {
+    const recommendedOption = options.find(
+      (opt) => opt.text.toLowerCase() === recommendation.recommendation.toLowerCase()
+    );
+    if (!recommendedOption) return 75;
+
+    const prosCount = recommendedOption.pros.length;
+    const consCount = recommendedOption.cons.length;
+    const total = prosCount + consCount;
+    if (total === 0) return 70;
+
+    const ratio = prosCount / total;
+    return Math.min(95, Math.max(60, Math.round(ratio * 100)));
+  };
+
+  const confidenceScore = getConfidenceScore();
+
+  const getConfidenceLabel = () => {
+    if (confidenceScore >= 85) return { text: "High Confidence", color: "text-green-600" };
+    if (confidenceScore >= 70) return { text: "Moderate Confidence", color: "text-amber-600" };
+    return { text: "Consider Carefully", color: "text-orange-600" };
+  };
+
+  const handleFeedback = (type: "helpful" | "unhelpful") => {
     setFeedback(type);
-    // You could add an API call here to store user feedback
     toast.success(
-      type === 'helpful' 
-        ? "Thanks for your feedback!" 
+      type === "helpful"
+        ? "Thanks for your feedback!"
         : "Thanks for your feedback. We'll improve our recommendations."
     );
   };
-  
+
+  const handleShare = async () => {
+    const selectedOption = options.find((opt) => opt.selected);
+    const shareText = `Decision: ${title}\n\nRecommendation: ${recommendation.recommendation}\n\nMy choice: ${selectedOption?.text || "Not yet decided"}\n\nMade with Solus`;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `Decision: ${title}`,
+          text: shareText,
+        });
+      } catch {
+        // User cancelled or share failed
+      }
+    } else {
+      await navigator.clipboard.writeText(shareText);
+      toast.success("Copied to clipboard!", {
+        description: "Share your decision with others",
+      });
+    }
+  };
+
+  const handleCopyReasoning = async () => {
+    await navigator.clipboard.writeText(
+      `${recommendation.recommendation}\n\n${recommendation.reasoning}`
+    );
+    toast.success("Reasoning copied!");
+  };
+
+  const toggleOptionExpand = (id: string) => {
+    setExpandedOption(expandedOption === id ? null : id);
+  };
+
   return (
-    <div className="space-y-6">
-      <Card className="overflow-hidden border-primary/10 shadow-md">
-        <CardHeader className="pb-3 md:pb-4 bg-gradient-to-r from-primary/5 to-background">
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle className="text-xl md:text-2xl">{title}</CardTitle>
-              <CardDescription>
-                <Badge variant="outline" className="mt-2">
-                  {category.charAt(0).toUpperCase() + category.slice(1)}
+    <div className="space-y-4">
+      {/* Main Recommendation Card */}
+      <Card className="overflow-hidden border-primary/20 shadow-lg">
+        {/* Gradient Header */}
+        <div className="h-1.5 bg-gradient-to-r from-primary via-purple-500 to-pink-500" />
+
+        <CardHeader className="pb-3 space-y-3">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 flex-wrap mb-1">
+                <Badge variant="outline" className="text-xs capitalize">
+                  {category}
                 </Badge>
-              </CardDescription>
+                <Badge
+                  variant="secondary"
+                  className="text-xs bg-primary/10 text-primary"
+                >
+                  <Zap className="h-3 w-3 mr-1" />
+                  Quick Decision
+                </Badge>
+              </div>
+              <CardTitle className="text-lg md:text-xl leading-tight">
+                {title}
+              </CardTitle>
             </div>
-            <CheckCircle2 className="h-7 w-7 md:h-9 md:w-9 text-primary shrink-0" />
+            <div className="flex items-center gap-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+                onClick={handleShare}
+              >
+                <Share2 className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </CardHeader>
-        
-        <CardContent className="space-y-6">
-          {/* Recommendation box */}
-          <div className="rounded-lg border-2 border-primary/30 bg-primary/5 p-4 transition-all hover:border-primary/40 hover:bg-primary/10">
-            <h3 className="text-lg font-semibold mb-2 flex items-center text-primary">
-              <CheckCircle2 className="h-5 w-5 mr-2" />
-              Recommendation
-            </h3>
-            <p className="text-lg font-medium">{recommendation.recommendation}</p>
-            
-            <Separator className="my-4" />
-            
-            <h3 className="text-md font-semibold mb-2">Reasoning</h3>
-            <p className="text-md text-muted-foreground">{recommendation.reasoning}</p>
-            
+
+        <CardContent className="space-y-5 pt-0">
+          {/* AI Recommendation Box */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="rounded-xl border-2 border-primary/30 bg-gradient-to-br from-primary/5 via-primary/10 to-purple-500/5 p-4"
+          >
+            <div className="flex items-center gap-2 mb-3">
+              <div className="p-1.5 rounded-lg bg-primary/20">
+                <Sparkles className="h-4 w-4 text-primary" />
+              </div>
+              <span className="text-sm font-semibold text-primary">
+                AI Recommendation
+              </span>
+            </div>
+
+            <p className="text-lg md:text-xl font-bold mb-4">
+              {recommendation.recommendation}
+            </p>
+
+            {/* Confidence Meter */}
+            <div className="space-y-2 mb-4">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground flex items-center gap-1">
+                  <TrendingUp className="h-3.5 w-3.5" />
+                  Confidence
+                </span>
+                <span className={`font-medium ${getConfidenceLabel().color}`}>
+                  {getConfidenceLabel().text} ({confidenceScore}%)
+                </span>
+              </div>
+              <Progress value={confidenceScore} className="h-2" />
+            </div>
+
+            {/* Reasoning */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-muted-foreground">
+                  Why this choice?
+                </span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 text-xs"
+                  onClick={handleCopyReasoning}
+                >
+                  <Copy className="h-3 w-3 mr-1" />
+                  Copy
+                </Button>
+              </div>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                {recommendation.reasoning}
+              </p>
+            </div>
+
+            {/* Full Analysis Toggle */}
             {recommendation.fullAnalysis && (
-              <div className="mt-4">
+              <div className="mt-4 pt-3 border-t border-primary/20">
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => setShowFullAnalysis(!showFullAnalysis)}
-                  className="p-0 h-auto text-primary"
+                  className="p-0 h-auto text-primary hover:text-primary/80"
                 >
                   {showFullAnalysis ? (
                     <ChevronUp className="h-4 w-4 mr-1.5" />
                   ) : (
                     <ChevronDown className="h-4 w-4 mr-1.5" />
                   )}
-                  {showFullAnalysis ? "Hide" : "Show"} full analysis
+                  {showFullAnalysis ? "Hide" : "Show"} detailed analysis
                 </Button>
-                
-                {showFullAnalysis && (
-                  <div className="mt-3 text-sm text-muted-foreground p-3 border rounded-md bg-background animate-fadeIn">
-                    <p className="whitespace-pre-line">{recommendation.fullAnalysis}</p>
-                  </div>
-                )}
+
+                <AnimatePresence>
+                  {showFullAnalysis && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="mt-3 text-sm text-muted-foreground p-3 border rounded-lg bg-background/50"
+                    >
+                      <p className="whitespace-pre-line">
+                        {recommendation.fullAnalysis}
+                      </p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             )}
-          </div>
-          
-          {/* Context factors */}
+          </motion.div>
+
+          {/* Context Factors */}
           {contextFactors.length > 0 && (
-            <div className="animate-fadeIn">
-              <h3 className="text-md font-semibold mb-2">Considered Context Factors</h3>
-              <div className="flex flex-wrap gap-2">
+            <div>
+              <div className="flex items-center gap-1.5 mb-2">
+                <Info className="h-3.5 w-3.5 text-muted-foreground" />
+                <span className="text-xs font-medium text-muted-foreground">
+                  Context Considered
+                </span>
+              </div>
+              <div className="flex flex-wrap gap-1.5">
                 {contextFactors.map((factor, index) => (
-                  <Badge 
-                    key={index} 
-                    variant="secondary" 
-                    className="px-2 py-1 text-sm transition-all hover:bg-secondary/80"
+                  <Badge
+                    key={index}
+                    variant="secondary"
+                    className="text-xs px-2 py-0.5"
                   >
                     {factor}
                   </Badge>
@@ -146,144 +286,238 @@ export default function RecommendationResult({
               </div>
             </div>
           )}
-          
-          {/* Options */}
+
+          {/* Options Selection */}
           <div>
-            <h3 className="text-md font-semibold mb-3">All Options</h3>
-            <div className="space-y-3">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-sm font-semibold">Choose Your Option</h3>
+              <span className="text-xs text-muted-foreground">
+                Tap to select
+              </span>
+            </div>
+
+            <div className="space-y-2">
               {options.map((option) => {
-                const isRecommended = option.text.toLowerCase() === recommendation.recommendation.toLowerCase();
-                
+                const isRecommended =
+                  option.text.toLowerCase() ===
+                  recommendation.recommendation.toLowerCase();
+                const isExpanded = expandedOption === option.id;
+                const hasProsOrCons =
+                  option.pros.length > 0 || option.cons.length > 0;
+
                 return (
-                  <div 
+                  <motion.div
                     key={option.id}
-                    className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
-                      option.selected 
-                        ? "border-primary bg-primary/10 shadow-sm" 
+                    layout
+                    className={`rounded-xl border-2 overflow-hidden transition-all ${
+                      option.selected
+                        ? "border-primary bg-primary/5 shadow-md"
                         : isRecommended
-                          ? "border-primary/40 bg-primary/5 hover:border-primary/60 hover:bg-primary/10"
-                          : "border-muted hover:border-primary/30 hover:bg-muted/30"
+                        ? "border-primary/40 bg-primary/5"
+                        : "border-muted hover:border-primary/30"
                     }`}
-                    onClick={() => onOptionSelect(option.id)}
                   >
-                    <div className="flex flex-col gap-2">
-                      <div className="flex items-center justify-between">
-                        <h4 className="font-medium">{option.text}</h4>
-                        <div className="flex items-center gap-2">
+                    {/* Option Header - Always Clickable */}
+                    <button
+                      onClick={() => onOptionSelect(option.id)}
+                      className="w-full p-3 md:p-4 text-left"
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-2 flex-1 min-w-0">
+                          <div
+                            className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
+                              option.selected
+                                ? "border-primary bg-primary"
+                                : "border-muted-foreground/30"
+                            }`}
+                          >
+                            {option.selected && (
+                              <CheckCheck className="h-3 w-3 text-primary-foreground" />
+                            )}
+                          </div>
+                          <span
+                            className={`font-medium truncate ${
+                              option.selected ? "text-primary" : ""
+                            }`}
+                          >
+                            {option.text}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center gap-1.5 flex-shrink-0">
                           {isRecommended && (
-                            <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30">
-                              AI Recommended
+                            <Badge
+                              variant="outline"
+                              className="text-[10px] px-1.5 py-0 bg-primary/10 text-primary border-primary/30 hidden sm:flex"
+                            >
+                              <Sparkles className="h-2.5 w-2.5 mr-0.5" />
+                              Best
                             </Badge>
                           )}
-                          {option.selected && (
-                            <Badge 
-                              variant={isRecommended ? "default" : "outline"} 
-                              className={isRecommended 
-                                ? "bg-primary text-primary-foreground animate-pulse" 
-                                : "bg-secondary text-secondary-foreground"
-                              }
+                          {hasProsOrCons && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-6 w-6 p-0"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                toggleOptionExpand(option.id);
+                              }}
                             >
-                              {isRecommended ? <CheckCheck className="h-3 w-3 mr-1" /> : null}
-                              Selected
-                            </Badge>
+                              {isExpanded ? (
+                                <ChevronUp className="h-4 w-4" />
+                              ) : (
+                                <ChevronDown className="h-4 w-4" />
+                              )}
+                            </Button>
                           )}
                         </div>
                       </div>
-                      
-                      {/* Pros and Cons */}
-                      {(option.pros.length > 0 || option.cons.length > 0) && (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-1">
-                          {option.pros.length > 0 && (
-                            <div className="bg-green-50 dark:bg-green-900/20 p-2 rounded-md transition-all hover:bg-green-100 dark:hover:bg-green-900/30">
-                              <p className="text-xs font-semibold text-green-600 dark:text-green-400 flex items-center mb-1.5">
-                                <Plus className="h-3 w-3 mr-1" />
-                                Pros
-                              </p>
-                              <ul className="text-xs space-y-1 list-disc list-inside text-green-700 dark:text-green-300">
-                                {option.pros.map((pro, index) => (
-                                  <li key={index} className="ml-1">{pro}</li>
-                                ))}
-                              </ul>
-                            </div>
-                          )}
-                          
-                          {option.cons.length > 0 && (
-                            <div className="bg-red-50 dark:bg-red-900/20 p-2 rounded-md transition-all hover:bg-red-100 dark:hover:bg-red-900/30">
-                              <p className="text-xs font-semibold text-red-600 dark:text-red-400 flex items-center mb-1.5">
-                                <Minus className="h-3 w-3 mr-1" />
-                                Cons
-                              </p>
-                              <ul className="text-xs space-y-1 list-disc list-inside text-red-700 dark:text-red-300">
-                                {option.cons.map((con, index) => (
-                                  <li key={index} className="ml-1">{con}</li>
-                                ))}
-                              </ul>
-                            </div>
-                          )}
-                        </div>
+                    </button>
+
+                    {/* Expandable Pros/Cons */}
+                    <AnimatePresence>
+                      {isExpanded && hasProsOrCons && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          exit={{ opacity: 0, height: 0 }}
+                          className="border-t border-border/50"
+                        >
+                          <div className="p-3 grid grid-cols-2 gap-2">
+                            {/* Pros */}
+                            {option.pros.length > 0 && (
+                              <div className="bg-green-500/10 p-2 rounded-lg">
+                                <p className="text-[10px] font-semibold text-green-600 flex items-center gap-1 mb-1.5">
+                                  <Plus className="h-3 w-3" />
+                                  Pros
+                                </p>
+                                <ul className="space-y-1">
+                                  {option.pros.map((pro, idx) => (
+                                    <li
+                                      key={idx}
+                                      className="text-xs text-green-700 dark:text-green-300"
+                                    >
+                                      • {pro}
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+
+                            {/* Cons */}
+                            {option.cons.length > 0 && (
+                              <div className="bg-red-500/10 p-2 rounded-lg">
+                                <p className="text-[10px] font-semibold text-red-600 flex items-center gap-1 mb-1.5">
+                                  <Minus className="h-3 w-3" />
+                                  Cons
+                                </p>
+                                <ul className="space-y-1">
+                                  {option.cons.map((con, idx) => (
+                                    <li
+                                      key={idx}
+                                      className="text-xs text-red-700 dark:text-red-300"
+                                    >
+                                      • {con}
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+                          </div>
+                        </motion.div>
                       )}
-                    </div>
-                  </div>
+                    </AnimatePresence>
+                  </motion.div>
                 );
               })}
             </div>
           </div>
         </CardContent>
-        
-        <CardFooter className="flex flex-wrap gap-3 justify-between py-4 md:py-5 bg-gradient-to-r from-background to-primary/5">
-          <div className="flex flex-wrap gap-2">
-            {onNew && (
-              <Button 
-                variant="outline" 
-                onClick={onNew} 
-                disabled={isProcessing}
-                className="transition-all hover:bg-primary/5"
-              >
-                <RefreshCw className="h-4 w-4 mr-2" />
-                New Decision
-              </Button>
-            )}
-          </div>
-          
-          <div className="flex flex-wrap gap-2 md:gap-3">
-            <div className="flex gap-1">
-              <Button 
-                variant={feedback === 'helpful' ? 'default' : 'outline'}
-                size="sm" 
-                className={`rounded-r-none border-r-0 px-2.5 transition-all ${
-                  feedback === 'helpful' ? 'bg-green-600 hover:bg-green-700' : 'hover:bg-green-50 dark:hover:bg-green-900/20'
-                }`}
-                onClick={() => handleFeedback('helpful')}
-              >
-                <ThumbsUp className="h-4 w-4" />
-              </Button>
-              <Button 
-                variant={feedback === 'unhelpful' ? 'default' : 'outline'}
-                size="sm" 
-                className={`rounded-l-none px-2.5 transition-all ${
-                  feedback === 'unhelpful' ? 'bg-red-600 hover:bg-red-700' : 'hover:bg-red-50 dark:hover:bg-red-900/20'
-                }`}
-                onClick={() => handleFeedback('unhelpful')}
-              >
-                <ThumbsDown className="h-4 w-4" />
-              </Button>
-            </div>
-            
-            <Button 
-              onClick={onSave} 
-              disabled={isProcessing || !options.some(opt => opt.selected)}
-              className="whitespace-nowrap transition-all hover:bg-primary/90"
+
+        {/* Footer Actions */}
+        <CardFooter className="flex flex-col gap-3 pt-4 border-t bg-muted/30">
+          {/* Primary Actions */}
+          <div className="flex w-full gap-2">
+            <Button
+              onClick={onSave}
+              disabled={isProcessing || !options.some((opt) => opt.selected)}
+              className="flex-1"
+              size="lg"
             >
-              {isProcessing ? "Saving..." : (
+              {isProcessing ? (
+                "Saving..."
+              ) : (
                 <>
                   <Save className="h-4 w-4 mr-2" />
                   Save Decision
                 </>
               )}
             </Button>
+            {onNew && (
+              <Button
+                variant="outline"
+                onClick={onNew}
+                disabled={isProcessing}
+                size="lg"
+              >
+                <RefreshCw className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
+
+          {/* Feedback Row */}
+          <div className="flex items-center justify-between w-full">
+            <span className="text-xs text-muted-foreground">
+              Was this helpful?
+            </span>
+            <div className="flex gap-1">
+              <Button
+                variant={feedback === "helpful" ? "default" : "ghost"}
+                size="sm"
+                className={`h-8 px-3 ${
+                  feedback === "helpful"
+                    ? "bg-green-600 hover:bg-green-700"
+                    : "hover:bg-green-500/10 hover:text-green-600"
+                }`}
+                onClick={() => handleFeedback("helpful")}
+              >
+                <ThumbsUp className="h-3.5 w-3.5 mr-1" />
+                Yes
+              </Button>
+              <Button
+                variant={feedback === "unhelpful" ? "default" : "ghost"}
+                size="sm"
+                className={`h-8 px-3 ${
+                  feedback === "unhelpful"
+                    ? "bg-red-600 hover:bg-red-700"
+                    : "hover:bg-red-500/10 hover:text-red-600"
+                }`}
+                onClick={() => handleFeedback("unhelpful")}
+              >
+                <ThumbsDown className="h-3.5 w-3.5 mr-1" />
+                No
+              </Button>
+            </div>
           </div>
         </CardFooter>
       </Card>
+
+      {/* Quick Tip Card */}
+      <Card className="border-dashed bg-muted/30">
+        <CardContent className="p-3 flex items-start gap-3">
+          <div className="p-1.5 rounded-lg bg-amber-500/10 flex-shrink-0">
+            <Clock className="h-4 w-4 text-amber-600" />
+          </div>
+          <div>
+            <p className="text-xs font-medium mb-0.5">Follow up later</p>
+            <p className="text-xs text-muted-foreground">
+              After saving, you can add a reflection to track how this decision
+              turned out.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
-} 
+}
