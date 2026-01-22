@@ -244,6 +244,8 @@ function getDecisionOutcome(decision: Decision): string {
     const selectedOption = decision.options?.find(o => o.selected);
     if (selectedOption) return selectedOption.text;
     if (decision.recommendation) return decision.recommendation;
+  } else if (decision.type === 'deep') {
+    if (decision.recommendation) return decision.recommendation;
   }
   return "In progress";
 }
