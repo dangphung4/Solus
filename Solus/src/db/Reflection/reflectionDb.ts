@@ -42,14 +42,36 @@ const fromFirestore = (data: DocumentData): Reflection => {
 
 const toFirestore = (reflection: Reflection): DocumentData => {
   const now = new Date();
-  return {
-    ...reflection,
+
+  // Create base object with required fields
+  const data: DocumentData = {
+    id: reflection.id,
+    userId: reflection.userId,
+    decisionId: reflection.decisionId,
+    decisionType: reflection.decisionType,
+    decisionCategory: reflection.decisionCategory,
+    outcome: reflection.outcome,
+    reflectionText: reflection.reflectionText,
+    wouldRepeat: reflection.wouldRepeat,
     createdAt:
       reflection.createdAt instanceof Date
         ? Timestamp.fromDate(reflection.createdAt)
         : Timestamp.fromDate(now),
     updatedAt: Timestamp.fromDate(now),
   };
+
+  // Only add optional fields if they have values (Firebase doesn't allow undefined)
+  if (reflection.learnings && reflection.learnings.length > 0) {
+    data.learnings = reflection.learnings;
+  }
+  if (reflection.improvementNotes) {
+    data.improvementNotes = reflection.improvementNotes;
+  }
+  if (reflection.aiInsights && reflection.aiInsights.length > 0) {
+    data.aiInsights = reflection.aiInsights;
+  }
+
+  return data;
 };
 
 /**
