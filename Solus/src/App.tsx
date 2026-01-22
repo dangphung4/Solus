@@ -16,6 +16,8 @@ import PrivacyPolicyPage from '@/Core/Landing/PrivacyPolicyPage'
 import TermsOfService from '@/Core/Landing/TermsOfService'
 import QuickDecisionsPage from '@/Core/QuickDecisions/QuickDecisionsPage'
 import DeepReflectionsPage from '@/Core/DeepReflections/DeepReflectionsPage'
+import DecisionHistoryPage from '@/Core/DecisionHistory/DecisionHistoryPage'
+import DecisionDetailPage from '@/Core/DecisionDetail/DecisionDetailPage'
 
 // PWA Badge
 import PWABadge from '@/PWABadge'
@@ -57,6 +59,8 @@ function App() {
               <Route path="/quick-decisions" element={<QuickDecisionsPage />} />
               <Route path="/deep-reflections" element={<DeepReflectionsPage />} />
               <Route path="/reflections" element={<ReflectionsPage />} />
+              <Route path="/history" element={<DecisionHistoryPage />} />
+              <Route path="/decisions/:id" element={<DecisionDetailPage />} />
             </Route>
             
             {/* Fallback route */}

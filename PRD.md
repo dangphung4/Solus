@@ -784,8 +784,8 @@ Progressive Web App (PWA) with native-like experience across:
 
 **AI/ML**
 - Google Gemini AI (via Vercel AI SDK)
-  - Gemini Flash 2.0 for quick decisions
-  - Gemini Pro 1.5 for deep reflections
+  - Gemini Flash latest for quick decisions
+  - Gemini Pro latest for deep reflections
 - Zod for schema validation
 - Structured output with generateObject()
 - Graceful fallbacks for AI failures
