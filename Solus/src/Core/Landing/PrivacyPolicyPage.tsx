@@ -17,7 +17,7 @@ import { ArrowLeft, Shield, Eye, Lock, Database } from "lucide-react"
 
 export default function PrivacyPolicyPage() {
   // Current date for last updated
-  const lastUpdated = "June 15, 2023"
+  const lastUpdated = "June 15, 2025"
 
   return (
     <div className="flex flex-col min-h-screen">

@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { LogOut, User, Zap, Brain, LayoutDashboard, PencilLine } from 'lucide-react';
+import { LogOut, User, Zap, Brain, LayoutDashboard, PencilLine, HistoryIcon } from 'lucide-react';
 import { toast } from 'sonner';
 import SolusLogo from '@/assets/solus-logo.svg';
 
@@ -119,6 +119,13 @@ export function Navbar() {
                     <Button variant="ghost" className="rounded-full transition-all hover:bg-primary/10">
                       <PencilLine className="mr-2 h-4 w-4" />
                       Journal
+                    </Button>
+                  </Link>
+
+                  <Link to="/history">
+                    <Button variant="ghost" className="rounded-full transition-all hover:bg-primary/10">
+                      <HistoryIcon className="mr-2 h-4 w-4" />
+                      History
                     </Button>
                   </Link>
                 </>

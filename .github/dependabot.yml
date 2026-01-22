@@ -5,31 +5,93 @@ updates:
     directory: "/Solus"
     schedule:
       interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "America/Los_Angeles"
     # Limit the number of open pull requests for npm dependencies
     open-pull-requests-limit: 10
     # Specify labels for npm pull requests
     labels:
       - "dependencies"
       - "npm"
-    # Set reviewers
+      - "automated"
+    # Set reviewers and assignees
     reviewers:
+      - "dangphung4"
+    assignees:
       - "dangphung4"
     # Configure npm-specific options
     registries:
       - npm-registry
-    # Handle peer dependencies properly 
+    # Handle peer dependencies properly
     versioning-strategy: increase
+    # Group updates to reduce PR noise
+    groups:
+      # Group all patch and minor updates together
+      minor-and-patch:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+      # Separate group for major version updates (needs careful review)
+      major-updates:
+        patterns:
+          - "*"
+        update-types:
+          - "major"
+      # Group all React-related updates
+      react-ecosystem:
+        patterns:
+          - "react*"
+          - "@types/react*"
+      # Group all Firebase updates
+      firebase-ecosystem:
+        patterns:
+          - "firebase*"
+          - "@firebase/*"
+      # Group all testing libraries
+      testing-libraries:
+        patterns:
+          - "vitest*"
+          - "@testing-library/*"
+          - "@vitest/*"
+      # Group Tailwind and UI libraries
+      ui-libraries:
+        patterns:
+          - "tailwindcss*"
+          - "@tailwindcss/*"
+          - "lucide-react"
+          - "@radix-ui/*"
+      # Group build tools
+      build-tools:
+        patterns:
+          - "vite*"
+          - "@vitejs/*"
+          - "typescript"
+          - "eslint*"
+          - "@typescript-eslint/*"
+      # Group AI/ML libraries
+      ai-libraries:
+        patterns:
+          - "ai"
+          - "@ai-sdk/*"
+          - "zod"
     # Add options to handle React type issues
     ignore:
       # Keep React types in sync with React version
       - dependency-name: "@types/react"
         update-types: ["version-update:semver-major"]
-      # Ignore types updates that might break builds
+      # Ignore Tailwind v4 (staying on v3 for stability)
+      - dependency-name: "tailwindcss"
+        update-types: ["version-update:semver-major"]
+      # Ignore major version updates for types (can break builds)
       - dependency-name: "@types/*"
         update-types: ["version-update:semver-major"]
-    # Use options that match your CI build
+    # Use conventional commits format
     commit-message:
-      prefix: "npm"
+      prefix: "build"
+      prefix-development: "chore"
       include: "scope"
 
   # Enable version updates for GitHub Actions
@@ -37,15 +99,25 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "America/Los_Angeles"
     # Limit the number of open pull requests for GitHub Actions
     open-pull-requests-limit: 5
     # Specify labels for GitHub Actions pull requests
     labels:
       - "dependencies"
       - "github-actions"
-    # Set reviewers
+      - "automated"
+    # Set reviewers and assignees
     reviewers:
       - "dangphung4"
+    assignees:
+      - "dangphung4"
+    # Use conventional commits format
+    commit-message:
+      prefix: "ci"
+      include: "scope"
 
 # Define registries
 registries:
