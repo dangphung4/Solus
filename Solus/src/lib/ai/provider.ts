@@ -13,13 +13,13 @@ export const google = createGoogleGenerativeAI({
 });
 
 // Create models for different purposes
-export const geminiPro = google('gemini-1.5-pro-latest');
-export const geminiFlash = google('gemini-2.0-flash');
+export const geminiPro = google('gemini-3-pro-preview');
+export const geminiFlash = google('gemini-2.5-flash-lite');
 
 // For embedding/vector operations if needed
 export const embeddingModel = google.textEmbeddingModel('text-embedding-004');
 
 // Model with search grounding for up-to-date information
-export const geminiProWithSearch = google('gemini-1.5-pro-latest', {
+export const geminiProWithSearch = google('gemini-3-pro-preview', {
   useSearchGrounding: true,
 }); 

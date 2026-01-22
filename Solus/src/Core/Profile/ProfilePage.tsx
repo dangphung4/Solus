@@ -1,4 +1,4 @@
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { useAuth } from "@/hooks/useAuth"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -6,11 +6,15 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { AlertCircle, CheckCircle, LogOut, Upload, X } from "lucide-react"
+import { AlertCircle, CheckCircle, LogOut, Upload, X, Zap, Brain, MessageSquare, TrendingUp, Loader2 } from "lucide-react"
 import { toast } from "sonner"
 import { useNavigate } from "react-router-dom"
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage"
 import { app } from "@/lib/firebase"
+import { getUserDecisions } from "@/db/Decision/decisionDb"
+import { getUserReflections } from "@/db/Reflection/reflectionDb"
+import { Decision } from "@/db/types/Decision"
+import { Reflection } from "@/db/types/Reflection"
 
 export default function ProfilePage() {
   const { currentUser, userProfile, updateUserData, logOut } = useAuth()
@@ -25,6 +29,35 @@ export default function ProfilePage() {
   const [success, setSuccess] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const storage = getStorage(app)
+
+  // Stats state
+  const [statsLoading, setStatsLoading] = useState(true)
+  const [decisions, setDecisions] = useState<Decision[]>([])
+  const [reflections, setReflections] = useState<Reflection[]>([])
+
+  // Load user stats
+  useEffect(() => {
+    const loadStats = async () => {
+      if (!currentUser) return;
+
+      setStatsLoading(true);
+      try {
+        const [userDecisions, userReflections] = await Promise.all([
+          getUserDecisions(currentUser.uid),
+          getUserReflections(currentUser.uid),
+        ]);
+
+        setDecisions(userDecisions);
+        setReflections(userReflections);
+      } catch (err) {
+        console.error("Error loading stats:", err);
+      } finally {
+        setStatsLoading(false);
+      }
+    };
+
+    loadStats();
+  }, [currentUser]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -241,6 +274,76 @@ export default function ProfilePage() {
             </CardFooter>
           </Card>
 
+          {/* Stats Section */}
+          <Card className="mt-6">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="h-5 w-5 text-primary" />
+                Your Stats
+              </CardTitle>
+              <CardDescription>Your decision-making journey at a glance</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {statsLoading ? (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="text-center p-4 rounded-lg bg-primary/5">
+                    <div className="flex justify-center mb-2">
+                      <div className="p-2 rounded-full bg-primary/10">
+                        <TrendingUp className="h-5 w-5 text-primary" />
+                      </div>
+                    </div>
+                    <p className="text-2xl font-bold">{decisions.length}</p>
+                    <p className="text-xs text-muted-foreground">Total Decisions</p>
+                  </div>
+
+                  <div className="text-center p-4 rounded-lg bg-amber-500/5">
+                    <div className="flex justify-center mb-2">
+                      <div className="p-2 rounded-full bg-amber-500/10">
+                        <Zap className="h-5 w-5 text-amber-600" />
+                      </div>
+                    </div>
+                    <p className="text-2xl font-bold">{decisions.filter(d => d.type === 'quick').length}</p>
+                    <p className="text-xs text-muted-foreground">Quick Decisions</p>
+                  </div>
+
+                  <div className="text-center p-4 rounded-lg bg-purple-500/5">
+                    <div className="flex justify-center mb-2">
+                      <div className="p-2 rounded-full bg-purple-500/10">
+                        <Brain className="h-5 w-5 text-purple-600" />
+                      </div>
+                    </div>
+                    <p className="text-2xl font-bold">{decisions.filter(d => d.type === 'deep').length}</p>
+                    <p className="text-xs text-muted-foreground">Deep Reflections</p>
+                  </div>
+
+                  <div className="text-center p-4 rounded-lg bg-green-500/5">
+                    <div className="flex justify-center mb-2">
+                      <div className="p-2 rounded-full bg-green-500/10">
+                        <MessageSquare className="h-5 w-5 text-green-600" />
+                      </div>
+                    </div>
+                    <p className="text-2xl font-bold">{reflections.length}</p>
+                    <p className="text-xs text-muted-foreground">Reflections</p>
+                  </div>
+                </div>
+              )}
+
+              <div className="mt-4 pt-4 border-t">
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => navigate('/history')}
+                >
+                  View Decision History
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
           <Card className="mt-6">
             <CardHeader>
               <CardTitle>Account Settings</CardTitle>
@@ -256,7 +359,7 @@ export default function ProfilePage() {
                   Configure
                 </Button>
               </div>
-              
+
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="font-medium">Data & Privacy</h3>
@@ -266,7 +369,7 @@ export default function ProfilePage() {
                   Manage
                 </Button>
               </div>
-              
+
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="font-medium">Delete Account</h3>
