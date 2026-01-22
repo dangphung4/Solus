@@ -29,6 +29,7 @@ import {
 } from "lucide-react";
 import { DecisionCategory } from "@/db/types/BaseDecision";
 import { toast } from "sonner";
+import { MarkdownRenderer } from "@/components/ui/markdown-renderer";
 import { motion, AnimatePresence } from "framer-motion";
 
 type Option = {
@@ -224,9 +225,10 @@ export default function RecommendationResult({
                   Copy
                 </Button>
               </div>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                {recommendation.reasoning}
-              </p>
+              <MarkdownRenderer
+                content={recommendation.reasoning}
+                className="text-sm text-muted-foreground"
+              />
             </div>
 
             {/* Full Analysis Toggle */}
@@ -254,9 +256,10 @@ export default function RecommendationResult({
                       exit={{ opacity: 0, height: 0 }}
                       className="mt-3 text-sm text-muted-foreground p-3 border rounded-lg bg-background/50"
                     >
-                      <p className="whitespace-pre-line">
-                        {recommendation.fullAnalysis}
-                      </p>
+                      <MarkdownRenderer
+                        content={recommendation.fullAnalysis}
+                        className="text-sm text-muted-foreground"
+                      />
                     </motion.div>
                   )}
                 </AnimatePresence>

@@ -46,6 +46,7 @@ import { createReflection } from "@/db/Reflection/reflectionDb";
 import { Decision } from "@/db/types/Decision";
 import { DecisionCategory, DecisionStatus } from "@/db/types/BaseDecision";
 import { ReflectionOutcome, LearningType } from "@/db/types/Reflection";
+import { MarkdownRenderer } from "@/components/ui/markdown-renderer";
 
 export default function DecisionDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -427,9 +428,10 @@ export default function DecisionDetailPage() {
               <CardContent className="pt-3">
                 <p className="font-medium text-primary mb-2">{decision.recommendation}</p>
                 {decision.recommendationReasoning && (
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    {decision.recommendationReasoning}
-                  </p>
+                  <MarkdownRenderer
+                    content={decision.recommendationReasoning}
+                    className="text-sm text-muted-foreground"
+                  />
                 )}
               </CardContent>
             </Card>
