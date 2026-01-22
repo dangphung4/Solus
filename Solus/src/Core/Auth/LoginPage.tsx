@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { useAuth } from "@/hooks/useAuth"
 import { Button } from "@/components/ui/button"
@@ -25,8 +25,15 @@ export default function LoginPage() {
   const [codeSent, setCodeSent] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [loginError, setLoginError] = useState<string | null>(null)
-  const { signIn, signInWithGoogle, signInWithPhone, verifyPhoneCode } = useAuth()
+  const { signIn, signInWithGoogle, signInWithPhone, verifyPhoneCode, currentUser, loading } = useAuth()
   const navigate = useNavigate()
+
+  // Redirect authenticated users to dashboard
+  useEffect(() => {
+    if (!loading && currentUser) {
+      navigate("/dashboard", { replace: true })
+    }
+  }, [currentUser, loading, navigate])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

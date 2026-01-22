@@ -29,6 +29,7 @@ import dashboardPreviewLight from "@/assets/solus-dashboard-preview-light.png"
 import journalPreviewDark from "@/assets/solus-journal-preview-dark.png"
 import journalPreviewLight from "@/assets/solus-journal-preview-light.png"
 import { useTheme } from "@/lib/ThemeProvider"
+import { useAuth } from "@/hooks/useAuth"
 
 
 export default function LandingPage() {
@@ -36,6 +37,14 @@ export default function LandingPage() {
   const [, setScrolled] = useState(false)
   const navigate = useNavigate()
   const { theme } = useTheme()
+  const { currentUser, loading } = useAuth()
+
+  // Redirect authenticated users to dashboard
+  useEffect(() => {
+    if (!loading && currentUser) {
+      navigate("/dashboard", { replace: true })
+    }
+  }, [currentUser, loading, navigate])
 
   // Handle scroll effect
   useEffect(() => {
